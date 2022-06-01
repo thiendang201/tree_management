@@ -30,8 +30,8 @@ const Header = () => {
           ></Link>
         </div>
         <div className="flex items-center">
-          <button className="py-1">
-            <TiArrowSortedDown size={"2.4rem"} fill={"#9FABC6"} />
+          <button className="py-1 ml-[-0.4rem]">
+            <TiArrowSortedDown size={"1.8rem"} fill={"#9FABC6"} />
           </button>
         </div>
       </div>
