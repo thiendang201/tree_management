@@ -12,7 +12,7 @@ const Header = () => {
           <input
             type="text"
             placeholder="Tìm kiếm cây xanh, kế hoạch, ..."
-            className="outline-none border border-border-color rounded-full py-[1rem] pl-[3.4rem] pr[1rem] min-w-[23rem] pr-[1rem]"
+            className="outline-none border border-border-color rounded-full py-[1rem] pl-[3.4rem] pr[1rem] min-w-[24rem] pr-[1rem] text-[1.1rem] font-medium "
           />
           <RiSearchLine
             className="absolute translate-x-[1rem]"

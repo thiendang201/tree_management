@@ -17,7 +17,7 @@ const SideNav = () => {
       path: "dashboard",
     },
     {
-      text: "Quuản lý cây xanh",
+      text: "Quản lý cây xanh",
       icon: <FluentTreeDeciduous20Filled size={24} color={primaryColor} />,
       path: "tree",
     },
@@ -32,7 +32,7 @@ const SideNav = () => {
       path: "problem",
     },
     {
-      text: "Thống kê và báo cáo",
+      text: "Thống kê & báo cáo",
       icon: <MdInsertChart size={24} color={primaryColor} />,
       path: "statistic",
     },
