@@ -7,7 +7,7 @@ const Layout = () => {
     <>
       <Header />
       <SideNav />
-      <main className="mt-58">
+      <main className="mt-59 ml-59">
         <Outlet />
       </main>
     </>
