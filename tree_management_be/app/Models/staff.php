@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class staff extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -22,6 +22,14 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+
+    public function role(){
+        return $this->hasOne(role::class, 'id', 'role_id');
+    }
+
+    public function plan(){
+        return $this->hasMany(plan::class, "staff_id", "id");
+    }
 
     /**
      * The attributes that should be hidden for serialization.
