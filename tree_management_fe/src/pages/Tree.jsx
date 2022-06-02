@@ -4,12 +4,16 @@ import { FaListUl } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
 import Button from "../shared/Button";
 import FluentTreeDeciduous20Filled from "../assets/icons/FluentTreeDeciduous20Filled";
-import { buttonColor } from "../config";
+import { buttonColor, primaryColor } from "../config";
 import { useEffect, useState } from "react";
 import TreeCard from "../components/tree/TreeCard";
+import TypeOfTree from "../components/tree/TypeOfTree";
+
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
   const [trees, setTrees] = useState([]);
+  const [typesOfTrees, setTypesOfTrees] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const trees = [
@@ -62,14 +66,83 @@ const Tree = () => {
         location: "Nguyễn Văn Linh, Hải Châu",
       },
     ];
-
     setTrees(trees);
   }, []);
 
+  useEffect(() => {
+    const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
+    const typesOfTrees = [
+      {
+        id: 1,
+        name: "Cây họ bàng",
+        treeQty: 235,
+      },
+      {
+        id: 2,
+        name: "Cây lá rộng",
+        treeQty: 397,
+      },
+      {
+        id: 3,
+        name: "Cây lá nhỏ",
+        treeQty: 176,
+      },
+      {
+        id: 4,
+        name: "Cây họ cau",
+        treeQty: 80,
+      },
+      {
+        id: 5,
+        name: "Cây họ cọ",
+
+        treeQty: 112,
+      },
+      {
+        id: 6,
+        name: "Cây họ A",
+
+        treeQty: 32,
+      },
+      {
+        id: 7,
+        name: "Cây họ B",
+
+        treeQty: 11,
+      },
+    ];
+    typesOfTrees.sort(({ treeQty: a }, { treeQty: b }) => b - a);
+    const total = typesOfTrees.reduce(
+      (sum, { treeQty }) => (sum += treeQty),
+      0
+    );
+    const list = typesOfTrees.map((type) => {
+      return {
+        ...type,
+        ratio: (type.treeQty / total) * 100,
+        color: colors.shift() || "#A8A8A8",
+      };
+    });
+    const other = list.slice(5).reduce(
+      (pre, cur) => {
+        return {
+          ...pre,
+          treeQty: pre.treeQty + cur.treeQty,
+          ratio: pre.ratio + cur.ratio,
+        };
+      },
+      { name: "Khác", treeQty: 0, ratio: 0, color: "#A8A8A8" }
+    );
+    const chartData = list.slice(0, 5);
+    chartData.push(other);
+    setChartData(chartData);
+    setTypesOfTrees(list);
+  }, []);
+
   return (
-    <div className="grid grid-cols-[76%_24%] items-stretch">
-      <div className="border rounded-[2.5rem] border-border-color m-2">
-        <div className="flex justify-between items-center p-1 border-b border-border-color">
+    <div className="grid grid-cols-[76%_24%] min-h-content">
+      <div className="m-2">
+        <div className="flex justify-between items-center p-1 border rounded-t-[2.5rem] border-border-color">
           <div className="flex gap-1 items-center">
             <div className="bg-[#F7F8FA] rounded-full p-1">
               <FluentTreeDeciduous20Filled size={24} color={buttonColor} />
@@ -83,7 +156,7 @@ const Tree = () => {
             />
           </div>
         </div>
-        <div className="grid grid-cols-[15%_1fr_15%] p-1 text-[1.2rem] border-b border-border-color">
+        <div className="grid grid-cols-[15%_1fr_15%] p-1 text-[1.2rem] border border-t-0 border-border-color sticky top-[5.9rem] bg-white z-10">
           <div className="flex items-center gap-1 cursor-pointer">
             <input
               type="radio"
@@ -100,31 +173,31 @@ const Tree = () => {
           </div>
           <div className="flex justify-center">
             <div>
-              <button className="font-semibold text-button-color hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
+              <button className="font-semibold text-button-color translate-y-hover border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
                 <MdFilterList size={"1.6rem"} fill={buttonColor} /> Bộ lọc
               </button>
             </div>
             <div>
-              <button className="font-semibold text-button-color hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border  flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
+              <button className="font-semibold text-button-color translate-y-hover border  flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
                 <RiSearchLine size={"1.6rem"} fill={buttonColor} /> Tìm kiếm
               </button>
             </div>
             <div>
-              <button className="font-semibold text-button-color hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border-l-0 border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
+              <button className="font-semibold text-button-color translate-y-hover border-l-0 border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
                 <MdDelete size={"1.6rem"} fill={buttonColor} /> Xóa
               </button>
             </div>
           </div>
           <div className="flex justify-end">
-            <button className="hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color tree-layout active">
+            <button className="translate-y-hover border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color tree-layout active">
               <BsFillGrid3X3GapFill size={"1.4rem"} fill={buttonColor} />
             </button>
-            <button className="hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color tree-layout">
+            <button className="translate-y-hover border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color tree-layout">
               <FaListUl size={"1.4rem"} fill={buttonColor} />
             </button>
           </div>
         </div>
-        <div className="bg-[#F7F8FA] rounded-b-[2.5rem]">
+        <div className="bg-[#F7F8FA] border border-t-0 border-border-color rounded-b-[2.5rem]">
           <div className="p-[2.4rem] pb-1">
             {layout === "grid" ? (
               <div className="grid grid-cols-4 gap-1">
@@ -135,13 +208,54 @@ const Tree = () => {
             ) : undefined}
           </div>
           <div className="p-1 text-center">
-            <button className="hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300 border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold">
+            <button className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold">
               Tải thêm
             </button>
           </div>
         </div>
       </div>
-      <div className="border-l border-border-color">loai cay</div>
+      <div className="border-l border-border-color px-2 pt-[3.4rem]">
+        <div className="flex justify-between items-center">
+          <h2 className="text-[1.4rem] font-semibold">Loại cây</h2>
+          <div>
+            <Button
+              type="outline"
+              text="Thêm mới"
+              icon={<MdAddCircle size={"2rem"} fill={primaryColor} />}
+            />
+          </div>
+        </div>
+        <div className="h-[5rem] mt-[1.2rem]">
+          {chartData.map(({ name, treeQty, ratio, color }, index) => (
+            <div
+              key={index}
+              style={{ width: ratio + "%", backgroundColor: color }}
+              className="h-[100%] inline-block relative group first:rounded-l-[0.4rem] last:rounded-r-[0.4rem]"
+            >
+              <div className="group-hover:top-[50%] group-hover:opacity-100 group-hover:visible p-[0.6rem] shadow-md absolute bg-white min-w-max right-0 rounded-[0.4rem] top-[55%] transition-all duration-300 opacity-0 invisible">
+                <strong>{name}</strong>
+                <br />
+                <span className="">{treeQty} cây</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <table className="mt-[2.4rem] w-[100%]">
+          <thead className="border-t border-b border-border-color">
+            <tr>
+              <th className="py-1">ID</th>
+              <th className="py-1 text-left">Tên loại cây</th>
+              <th className="py-1">Tỉ lệ</th>
+              <th className="py-1">#</th>
+            </tr>
+          </thead>
+          <tbody>
+            {typesOfTrees.map((type) => (
+              <TypeOfTree key={type.id} {...type} />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

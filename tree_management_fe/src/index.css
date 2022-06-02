@@ -36,4 +36,8 @@
   .translate-y-hover {
     @apply hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300;
   }
+
+  .min-h-content {
+    min-height: calc(100vh - 5.9rem);
+  }
 }
