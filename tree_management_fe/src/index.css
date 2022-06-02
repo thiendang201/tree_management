@@ -28,4 +28,12 @@
   .side-nav.active::after {
     @apply content-[""] absolute top-[50%] translate-y-[-50%] block left-[4.8rem] h-[100%] w-[0.4rem] bg-primary rounded-tl-full rounded-bl-full z-[-2];
   }
+
+  .tree-layout.active svg {
+    @apply fill-primary;
+  }
+
+  .translate-y-hover {
+    @apply hover:shadow-md hover:translate-y-[-0.1rem] transition-all duration-300;
+  }
 }

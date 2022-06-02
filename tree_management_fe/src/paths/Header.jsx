@@ -6,7 +6,7 @@ const Header = () => {
   const defaultAvt =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgSmojUgwjIB87c4Q0hLCAyl__oiTySWGWJUZtUNHlHjBALLzTsu_vMHYMaEwLts4QEoo&usqp=CAU";
   return (
-    <header className="fixed grid-cols-[76%_24%] grid top-0 left-58 right-0 h-59 border-b border-border-color pr-3">
+    <header className="fixed grid-cols-[76%_24%] grid top-0 left-58 right-0 h-59 border-b border-border-color pr-3 bg-white z-10">
       <div className="flex justify-end items-stretch">
         <div className="flex items-center relative pr-3">
           <input
