@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import MdiLeafCircle from "../assets/icons/MdiLeafCircle";
 import FluentTreeDeciduous20Filled from "../assets/icons/FluentTreeDeciduous20Filled";
 import FluentTaskListSquareLtr24Filled from "../assets/icons/FluentTaskListSquareLtr24Filled";
@@ -17,7 +17,7 @@ const SideNav = () => {
       path: "dashboard",
     },
     {
-      text: "Quuản lý cây xanh",
+      text: "Quản lý cây xanh",
       icon: <FluentTreeDeciduous20Filled size={24} color={primaryColor} />,
       path: "tree",
     },
@@ -32,7 +32,7 @@ const SideNav = () => {
       path: "problem",
     },
     {
-      text: "Thống kê và báo cáo",
+      text: "Thống kê & báo cáo",
       icon: <MdInsertChart size={24} color={primaryColor} />,
       path: "statistic",
     },
@@ -43,7 +43,7 @@ const SideNav = () => {
     },
   ];
   return (
-    <nav className="w-59 fixed top-0 left-0 bottom-0 border-r border-border-color">
+    <nav className="w-59 fixed top-0 left-0 bottom-0 border-r border-border-color z-10">
       <div>
         <Link
           className="flex pr-[0.1rem] justify-center h-58 items-center"

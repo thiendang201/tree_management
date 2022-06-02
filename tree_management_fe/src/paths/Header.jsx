@@ -6,13 +6,13 @@ const Header = () => {
   const defaultAvt =
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgSmojUgwjIB87c4Q0hLCAyl__oiTySWGWJUZtUNHlHjBALLzTsu_vMHYMaEwLts4QEoo&usqp=CAU";
   return (
-    <header className="fixed grid-cols-[76%_24%] grid top-0 left-58 right-0 h-59 border-b border-border-color pr-3">
+    <header className="fixed grid-cols-[76%_24%] grid top-0 left-58 right-0 h-59 border-b border-border-color pr-3 bg-white z-10">
       <div className="flex justify-end items-stretch">
         <div className="flex items-center relative pr-3">
           <input
             type="text"
             placeholder="Tìm kiếm cây xanh, kế hoạch, ..."
-            className="outline-none border border-border-color rounded-full py-[1rem] pl-[3.4rem] pr[1rem] min-w-[23rem] pr-[1rem]"
+            className="outline-none border border-border-color rounded-full py-[1rem] pl-[3.4rem] pr[1rem] min-w-[24rem] pr-[1rem] text-[1.1rem] font-medium "
           />
           <RiSearchLine
             className="absolute translate-x-[1rem]"

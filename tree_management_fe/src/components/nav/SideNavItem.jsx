@@ -11,7 +11,7 @@ const SideNavItem = ({ icon, text, path }) => {
       to={path}
     >
       {icon}
-      <span className="absolute opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible top-[50%] border border-primary rounded-[0.6rem] font-semibold z-[-1] bg-white p-[1rem] pl-[100%] translate-y-[-50%] left-0 min-w-[20rem]">
+      <span className="absolute opacity-0 invisible transition-all duration-300 group-hover:opacity-100 group-hover:visible top-[50%] group-hover:shadow-md rounded-[0.6rem] font-semibold z-[-1] bg-white p-[1.2rem] pl-[100%] translate-y-[-50%] left-0 min-w-[18rem]">
         {text}
       </span>
     </NavLink>
