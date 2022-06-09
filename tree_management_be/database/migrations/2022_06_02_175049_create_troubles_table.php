@@ -20,7 +20,8 @@ class CreateTroublesTable extends Migration
             $table->longText("description")->nullable();
             $table->string("image")->nullable();
 //            $table->dateTime("")->nullable();
-            $table->unsignedBigInteger("tree_id");
+            $table->Integer('status')->nullable();
+            $table->unsignedBigInteger("tree_id")->nullable();
             $table->timestamps();
             $table->foreign('tree_id')->references('id')->on('trees')->onUpdate('restrict')->onDelete('cascade');
         });

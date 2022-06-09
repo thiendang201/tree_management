@@ -16,7 +16,7 @@ class CreatePestImagesTable extends Migration
         Schema::create('pest_images', function (Blueprint $table) {
             $table->id();
             $table->string("image")->nullable();
-            $table->unsignedBigInteger("pest_id");
+            $table->unsignedBigInteger("pest_id")->nullable();
             $table->timestamps();
             $table->foreign('pest_id')->references('id')->on('pest_statuses')->onUpdate('restrict')->onDelete('cascade');
         });

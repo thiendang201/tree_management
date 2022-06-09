@@ -20,7 +20,7 @@ class CreateWorksTable extends Migration
             $table->date("start_date")->nullable();
             $table->date("end_date")->nullable();
             $table->date("finish_date")->nullable();
-            $table->unsignedBigInteger("plan_id");
+            $table->unsignedBigInteger("plan_id")->nullable();
             $table->timestamps();
             $table->foreign('plan_id')->references('id')->on('plans')->onUpdate('restrict')->onDelete('cascade');
         });

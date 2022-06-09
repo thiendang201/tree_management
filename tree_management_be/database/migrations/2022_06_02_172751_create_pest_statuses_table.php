@@ -19,7 +19,7 @@ class CreatePestStatusesTable extends Migration
             $table->longText("description")->nullable();
             $table->dateTime("sicked_date");
             $table->dateTime("cured_date");
-            $table->unsignedBigInteger("tree_id");
+            $table->unsignedBigInteger("tree_id")->nullable();
             $table->timestamps();
             $table->foreign('tree_id')->references('id')->on('trees')->onUpdate('restrict')->onDelete('cascade');
         });

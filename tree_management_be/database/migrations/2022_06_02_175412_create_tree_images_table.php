@@ -16,7 +16,7 @@ class CreateTreeImagesTable extends Migration
         Schema::create('tree_images', function (Blueprint $table) {
             $table->id();
             $table->string("image")->nullable();
-            $table->unsignedBigInteger("tree_id");
+            $table->unsignedBigInteger("tree_id")->nullable();
             $table->timestamps();
             $table->foreign('tree_id')->references('id')->on('trees')->onUpdate('restrict')->onDelete('cascade');
         });

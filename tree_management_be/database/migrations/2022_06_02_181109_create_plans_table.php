@@ -21,7 +21,7 @@ class CreatePlansTable extends Migration
             $table->date("start_date")->nullable();
             $table->date("end_date")->nullable();
             $table->integer("priority")->nullable();
-            $table->unsignedBigInteger("staff_manager_id");
+            $table->unsignedBigInteger("staff_manager_id")->nullable();
             $table->timestamps();
             $table->foreign('staff_manager_id')->references('id')->on('staffs')->onUpdate('restrict')->onDelete('cascade');
         });

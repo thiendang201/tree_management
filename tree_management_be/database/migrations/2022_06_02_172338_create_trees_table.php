@@ -18,7 +18,7 @@ class CreateTreesTable extends Migration
             $table->string("name")->nullable();
             $table->string("position")->nullable();
             $table->dateTime("planted_date")->nullable();
-            $table->unsignedBigInteger("tree_category_id");
+            $table->unsignedBigInteger("tree_category_id")->nullable();
             $table->timestamps();
             $table->foreign('tree_category_id')->references('id')->on('tree_categories')->onUpdate('restrict')->onDelete('cascade');
 

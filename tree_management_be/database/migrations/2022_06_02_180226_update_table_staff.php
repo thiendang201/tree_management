@@ -14,6 +14,7 @@ class UpdateTableStaff extends Migration
     public function up()
     {
         Schema::table('staffs', function (Blueprint $table){
+            $table->Integer('status')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
             $table->foreign('role_id')->references('id')->on('roles')->onUpdate('restrict')->onDelete('cascade');
         });
