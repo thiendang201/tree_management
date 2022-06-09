@@ -19,6 +19,7 @@ class CreateTroublesTable extends Migration
             $table->string("trouble_type")->nullable();
             $table->longText("description")->nullable();
             $table->string("image")->nullable();
+//            $table->dateTime("")->nullable();
             $table->unsignedBigInteger("tree_id");
             $table->timestamps();
             $table->foreign('tree_id')->references('id')->on('trees')->onUpdate('restrict')->onDelete('cascade');

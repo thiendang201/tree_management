@@ -27,8 +27,12 @@ class staff extends Authenticatable
         return $this->hasOne(role::class, 'id', 'role_id');
     }
 
-    public function plan(){
+    public function plans(){
         return $this->hasMany(plan::class, "staff_id", "id");
+    }
+
+    public function staff_executes(){
+        return $this->hasMany(staff_execute::class, "staff_id", "id");
     }
 
     /**

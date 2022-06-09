@@ -9,7 +9,7 @@ class role extends Model
 {
     use HasFactory;
 
-    public function staff(){
+    public function staffs(){
         return $this->hasMany(staff::class, "role_id", "id");
     }
 }
