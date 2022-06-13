@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePestImagesTable extends Migration
+class CreateAnhSauBenh extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreatePestImagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pest_images', function (Blueprint $table) {
+        Schema::create('AnhSauBenh', function (Blueprint $table) {
             $table->id();
-            $table->string("image")->nullable();
-            $table->unsignedBigInteger("pest_id")->nullable();
+            $table->string("hinhAnh")->nullable();
+            $table->unsignedBigInteger("idSauBenh")->nullable();
             $table->timestamps();
-            $table->foreign('pest_id')->references('id')->on('pest_statuses')->onUpdate('restrict')->onDelete('cascade');
+            $table->foreign('idSauBenh')->references('id')->on('TinhTrangSauBenh');
         });
     }
 
@@ -29,6 +29,6 @@ class CreatePestImagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pest_images');
+        Schema::dropIfExists('AnhSauBenh');
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateTableStaff extends Migration
+class UpdateNhanVien extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class UpdateTableStaff extends Migration
      */
     public function up()
     {
-        Schema::table('staffs', function (Blueprint $table){
-            $table->Integer('status')->nullable();
-            $table->unsignedBigInteger('role_id')->nullable();
-            $table->foreign('role_id')->references('id')->on('roles')->onUpdate('restrict')->onDelete('cascade');
+        //
+        Schema::table('NhanVien', function (Blueprint $table){
+            $table->string('trangThai')->nullable();
+            $table->unsignedBigInteger('idQuyen')->nullable();
+            $table->foreign('idQuyen')->references('id')->on('Quyen');
         });
     }
 
