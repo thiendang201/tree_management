@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class NhanVien extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
+    protected $table = "NhanVien";
     /**
      * The attributes that are mass assignable.
      *

@@ -16,7 +16,7 @@ class CreateCongViec extends Migration
         Schema::create('CongViec', function (Blueprint $table) {
             $table->id();
             $table->string("tenCV")->nullable();
-            $table->string("moTaTienDo")->nullable();
+            $table->longText("moTaTienDo")->nullable();
             $table->date("ngayBatDau")->nullable();
             $table->date("ngayKetThuc")->nullable();
             $table->date("ngayHoanThanh")->nullable();
