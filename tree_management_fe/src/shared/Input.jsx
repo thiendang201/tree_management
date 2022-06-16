@@ -31,6 +31,8 @@ const Input = ({
   options,
   error,
   classNamePrefix,
+  maxDate,
+  isMulti,
 }) => {
   if (type === "select")
     return (
@@ -42,6 +44,7 @@ const Input = ({
           className={`mt-[0.6rem] text-[1.2rem] font-medium ${className} ${
             error && "border border-danger"
           }`}
+          isMulti={isMulti}
           classNamePrefix={classNamePrefix || "react-select"}
           defaultValue={options[0]}
           onChange={onChange}
@@ -78,7 +81,7 @@ const Input = ({
         <ReactDatePicker
           selected={startValue}
           dateFormat="dd/MM/yyyy"
-          maxDate={new Date()}
+          maxDate={maxDate}
           onChange={onChange}
           locale={vi}
           customInput={<CustomDateInput />}

@@ -150,7 +150,7 @@ const AddTree = () => {
                   options={mucDo}
                   placeHolder="Chọn mức độ"
                   label="Mức độ"
-                  onBlur={onBlurSauBenh("mucDo")}
+                  // onBlur={onBlurSauBenh("mucDo")}
                   error={sauBenhErrors.mucDo}
                 />
                 <div className="col-span-2">
