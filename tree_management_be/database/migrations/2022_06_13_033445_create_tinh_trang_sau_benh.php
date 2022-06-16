@@ -17,6 +17,7 @@ class CreateTinhTrangSauBenh extends Migration
             $table->id();
             $table->string("tenBenh")->nullable();
             $table->longText("moTa")->nullable();
+            $table->string("mucDo")->nullable();
             $table->date("ngayPhatBenh")->nullable();
             $table->date("ngayHet")->nullable();
             $table->unsignedBigInteger("idCay")->nullable();

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\TreeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::prefix("admin")->group(function (){
+    Route::prefix("tree")->group(function (){
+        Route::get("list", [TreeController::class, 'index']);
+        Route::post("create", [TreeController::class, 'create']);
+        Route::put("update", [TreeController::class, 'update']);
+        Route::get("search", [TreeController::class, 'search']);
+        Route::delete("delete/{id}", [TreeController::class, 'delete']);
+    });
 });
