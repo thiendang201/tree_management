@@ -1,19 +1,25 @@
+import { useEffect, useState } from "react";
+import { CSSTransition } from "react-transition-group";
 import { MdAddCircle, MdFilterList, MdDelete } from "react-icons/md";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import { FaListUl } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
-import Button from "../shared/Button";
-import FluentTreeDeciduous20Filled from "../assets/icons/FluentTreeDeciduous20Filled";
-import { buttonColor, primaryColor } from "../config";
-import { useEffect, useState } from "react";
-import TreeCard from "../components/tree/TreeCard";
-import TypeOfTree from "../components/tree/TypeOfTree";
+import Button from "../../shared/Button";
+import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous20Filled";
+import { buttonColor, primaryColor } from "../../config";
+import TreeCard from "../../components/tree/TreeCard";
+import TypeOfTree from "../../components/tree/TypeOfTree";
+import DeleteDialog from "../../shared/DeleteDialog";
+import { useNavigate } from "react-router-dom";
 
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
   const [trees, setTrees] = useState([]);
   const [typesOfTrees, setTypesOfTrees] = useState([]);
   const [chartData, setChartData] = useState([]);
+  const [treeIds, setTreeIds] = useState([]);
+  const [openTreeDeleteDialog, setOpenTreeDeleteDialog] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const trees = [
@@ -139,6 +145,35 @@ const Tree = () => {
     setTypesOfTrees(list);
   }, []);
 
+  const selectAll = (e) => {
+    const checked = e.target.checked;
+    if (checked) {
+      const IdList = trees.map(({ id }) => id);
+      setTreeIds(IdList);
+    } else {
+      setTreeIds([]);
+    }
+    setOpenTreeDeleteDialog(false);
+  };
+
+  const handleCheck = (id) => () => {
+    const checked = treeIds.includes(id);
+    if (checked) {
+      setTreeIds(treeIds.filter((treeId) => treeId !== id));
+    } else {
+      setTreeIds([...treeIds, id]);
+    }
+    setOpenTreeDeleteDialog(false);
+  };
+
+  const handleTreeDelete = () => {
+    setOpenTreeDeleteDialog(!openTreeDeleteDialog);
+  };
+
+  const toAddTreePage = () => {
+    navigate("add");
+  };
+
   return (
     <div className="grid grid-cols-[76%_24%] min-h-content">
       <div className="m-2">
@@ -153,15 +188,17 @@ const Tree = () => {
             <Button
               text="Thêm mới"
               icon={<MdAddCircle size={"2rem"} fill="#fff" />}
+              onClick={toAddTreePage}
             />
           </div>
         </div>
         <div className="grid grid-cols-[15%_1fr_15%] p-1 text-[1.2rem] border border-t-0 border-border-color sticky top-[5.9rem] bg-white z-10">
           <div className="flex items-center gap-1 cursor-pointer">
             <input
-              type="radio"
+              type="checkbox"
               name="select_all"
               id="select_all"
+              onChange={selectAll}
               className="appearance-none cursor-pointer h-[1.8rem] w-[1.8rem] border-2 p-[0.2rem] rounded-full checked:bg-primary checked:border-primary bg-clip-content"
             />
             <label
@@ -182,10 +219,24 @@ const Tree = () => {
                 <RiSearchLine size={"1.6rem"} fill={buttonColor} /> Tìm kiếm
               </button>
             </div>
-            <div>
-              <button className="font-semibold text-button-color translate-y-hover border-l-0 border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
+            <div className="relative">
+              <button
+                onClick={handleTreeDelete}
+                className="font-semibold text-button-color translate-y-hover border-l-0 border rounded-r-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]"
+              >
                 <MdDelete size={"1.6rem"} fill={buttonColor} /> Xóa
               </button>
+              <CSSTransition
+                in={openTreeDeleteDialog && treeIds.length > 0}
+                timeout={300}
+                classNames="dialog-slide-up"
+                unmountOnExit
+              >
+                <DeleteDialog
+                  message={`Bạn có muốn xóa ${treeIds.length} cây đã chọn không?`}
+                  handleClose={handleTreeDelete}
+                />
+              </CSSTransition>
             </div>
           </div>
           <div className="flex justify-end">
@@ -202,7 +253,12 @@ const Tree = () => {
             {layout === "grid" ? (
               <div className="grid grid-cols-4 gap-1">
                 {trees.map((tree) => (
-                  <TreeCard key={tree.id} {...tree} />
+                  <TreeCard
+                    key={tree.id}
+                    {...tree}
+                    checked={treeIds.includes(tree.id)}
+                    handleCheck={handleCheck}
+                  />
                 ))}
               </div>
             ) : undefined}
@@ -243,10 +299,10 @@ const Tree = () => {
         <table className="mt-[2.4rem] w-[100%]">
           <thead className="border-t border-b border-border-color">
             <tr>
-              <th className="py-1">ID</th>
-              <th className="py-1 text-left">Tên loại cây</th>
-              <th className="py-1">Tỉ lệ</th>
-              <th className="py-1">#</th>
+              <th className="py-1 text-[1.2rem]">ID</th>
+              <th className="py-1 text-[1.2rem] text-left">Tên loại cây</th>
+              <th className="py-1 text-[1.2rem]">Tỉ lệ</th>
+              <th className="py-1 text-[1.2rem]">#</th>
             </tr>
           </thead>
           <tbody>

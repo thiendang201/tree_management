@@ -41,3 +41,174 @@
     min-height: calc(100vh - 5.9rem);
   }
 }
+
+.dialog-slide-up-enter {
+  top: 125%;
+  opacity: 0;
+}
+.dialog-slide-up-enter-active {
+  top: 120%;
+  opacity: 1;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dialog-slide-up-exit {
+  top: 120%;
+  opacity: 1;
+}
+.dialog-slide-up-exit-active {
+  top: 125%;
+  opacity: 0;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.react-select__indicator-separator,
+.keHoachSX__indicator-separator {
+  display: none;
+}
+
+.react-select__control {
+  background-color: #fafbfd !important;
+  border-width: 0 !important;
+  padding: 0.6rem;
+  border-radius: 4px;
+}
+
+.keHoachSX__control {
+  background-color: #81b199 !important;
+  border-width: 0 !important;
+  padding: 0rem;
+  border-radius: 4px;
+}
+
+.react-select__single-value {
+  color: #49587b !important;
+  font-weight: 500;
+}
+
+.keHoachSX__single-value {
+  color: #fff !important;
+  font-weight: 500;
+}
+
+.react-select__indicator,
+.react-select__placeholder {
+  color: #9fabc6 !important;
+}
+
+.keHoachSX__indicator,
+.keHoachSX__placeholder {
+  color: #fff !important;
+}
+
+.react-datepicker {
+  font-family: "Poppins", sans-serif !important;
+  font-size: 1.2rem !important;
+  min-width: 240px;
+  border-width: 0 !important;
+}
+
+.react-datepicker__triangle::before,
+.react-datepicker__triangle::after {
+  display: none;
+}
+
+.react-datepicker__month-container {
+  width: 100%;
+}
+
+.react-datepicker__header {
+  background-color: #fafbfd !important;
+  border: none !important;
+}
+
+.react-datepicker__current-month {
+  padding: 12px 0;
+  font-size: 1.2rem !important;
+  color: #49587b !important;
+}
+
+.react-datepicker__navigation {
+  top: 18px !important;
+}
+
+.react-datepicker__day-names,
+.react-datepicker__week {
+  display: flex;
+  justify-content: space-evenly;
+  padding-bottom: 8px;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: #49587b !important;
+}
+
+.react-datepicker__day--outside-month {
+  opacity: 0.6;
+}
+
+.react-datepicker__day {
+  font-weight: 500;
+}
+
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day--selected {
+  color: #fff !important;
+}
+
+.react-datepicker__day.react-datepicker__day--disabled {
+  color: #ccc !important;
+}
+
+.filepond--panel-root {
+  background-color: #fafbfd !important;
+  /* border: 2px dashed #9fabc6; */
+}
+
+.filepond--root {
+  margin-bottom: 0 !important;
+}
+
+.filepond--credits {
+  display: none;
+}
+
+.tree-img .filepond--item {
+  width: calc(50% - 0.5em);
+}
+
+.pest-img .filepond--item {
+  width: calc(25% - 0.5em);
+}
+
+.filepond--drop-label label {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+}
+
+.filepond--drop-label label img {
+  width: 32px;
+}
+
+.filepond--drop-label label,
+.filepond--drop-label span {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.2rem !important;
+  color: #9fabc6;
+}
+
+.filepond--drop-label span {
+  color: #49587b;
+  font-weight: 500;
+}
+/* 
+.tree-img .filepond--wrapper:nth-child(1),
+.tree-img .filepond--wrapper:nth-child(2) {
+  grid-row: 1/3;
+}
+
+.tree-img .filepond--drop-label,
+.tree-img .filepond--root {
+  height: 100% !important;
+} */

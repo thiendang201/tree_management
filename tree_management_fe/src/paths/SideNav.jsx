@@ -14,36 +14,36 @@ const SideNav = () => {
     {
       text: "Dashboard",
       icon: <RiDashboardFill size={24} color={primaryColor} />,
-      path: "dashboard",
+      path: "admin/dashboard",
     },
     {
       text: "Quản lý cây xanh",
       icon: <FluentTreeDeciduous20Filled size={24} color={primaryColor} />,
-      path: "tree",
+      path: "admin/tree",
     },
     {
       text: "Quản lý kế hoạch",
       icon: <FluentTaskListSquareLtr24Filled size={24} color={primaryColor} />,
-      path: "plan",
+      path: "admin/plan",
     },
     {
       text: "Sự cố cây xanh",
       icon: <RiErrorWarningFill size={24} color={primaryColor} />,
-      path: "problem",
+      path: "admin/problem",
     },
     {
       text: "Thống kê & báo cáo",
       icon: <MdInsertChart size={24} color={primaryColor} />,
-      path: "statistic",
+      path: "admin/statistic",
     },
     {
       text: "Bản đồ cây xanh",
       icon: <FaMapMarkedAlt size={24} color={primaryColor} />,
-      path: "map",
+      path: "admin/map",
     },
   ];
   return (
-    <nav className="w-59 fixed top-0 left-0 bottom-0 border-r border-border-color z-10">
+    <nav className="w-59 fixed top-0 left-0 bottom-0 border-r border-border-color z-[11]">
       <div>
         <Link
           className="flex pr-[0.1rem] justify-center h-58 items-center"
