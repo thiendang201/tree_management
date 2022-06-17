@@ -12,9 +12,9 @@ class TreeService
 //        return $id?CayXanh::find($id):CayXanh::all();
 //    }
 
-    protected $limit = 3;
+    protected $limit = 8;
     protected $fields = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
-    protected $field_search = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
+    protected $field_search = array('CayXanh.*','LoaiCay.tenLoaiCay as tenLoaiCay');
 
     public function getAll(){
 //        return CayXanh::all();
@@ -70,10 +70,13 @@ class TreeService
         }
     }
 
-    public function delete($id)
+    public function delete($request)
     {
-        $tree = CayXanh::find($id);
-        $result = $tree->delete();
+        $listId = $request;
+        return $listId;
+        $tree = CayXanh::find($listId);
+        $tree->trangThai = '0';
+        $result = $tree->save();
         if ($result)
         {
             return ["result"=>"delete success"];
@@ -93,12 +96,33 @@ class TreeService
         $area = $request->input('khuVuc');
         $tree_age = $request->input('tuoiCay');
         $tree_category = $request->input('loaiCay');
-        $result = DB::table('cayxanh')
-            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay')
-            ->where($tree_name, 'like', "%".$tree_name."%")
-            ->where($area, 'like', "%".$area."%")
-            ->where($tree_age, 'like', "%".$tree_age."%")
-            ->where($tree_category, 'like', "%".$tree_category."%")
-            ->paginate($this->limit, $this->fields);;
+//        $result = DB::table('cayxanh')
+//            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay')
+//            ->where('tenCay', 'like', "%".$tree_name."%")
+//            ->where("viTri", 'like', "%".$area."%")
+//            ->where('idLoaiCay', '=', $tree_category)
+//            ->whereBetween(DB::raw('timestampdiff(YEAR, ngayTrong, date(now()))'), $tree_age)
+//            ->paginate($this->limit, $this->field_search);
+        $query = DB::table('cayxanh')
+            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay');
+        if ($tree_name!=null)
+        {
+            $query->where('tenCay', 'like', "%".$tree_name."%");
+        }
+        if ($area!=null)
+        {
+            $query->where("viTri", 'like', "%".$area."%");
+        }
+        if ($tree_category!=null)
+        {
+            $query->where('idLoaiCay', '=', $tree_category);
+        }
+        if ($tree_age!=null)
+        {
+            $query->whereBetween(DB::raw('timestampdiff(YEAR, ngayTrong, date(now()))'), $tree_age);
+        }
+        $result=$query->paginate($this->limit, $this->field_search);
+        return $result;
     }
+
 }

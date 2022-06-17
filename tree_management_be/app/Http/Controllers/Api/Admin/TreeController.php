@@ -46,9 +46,9 @@ class TreeController extends Controller
         return $result;
     }
 
-    public function delete($id)
+    public function delete(Request $request)
     {
-        $result = $this->treeService->delete($id);
+        $result = $this->treeService->delete($request);
         return $result;
     }
 
@@ -58,16 +58,15 @@ class TreeController extends Controller
         return $result;
     }
 
-//    public static function auto_id()
-//    {
-//        $prefix='CX';
-//        $table='CayXanh';
-//        $stringId = DB::table($table)->orderByDesc('id')->pluck('id')[0];
-//        if ($stringId==null)
-//        {
-//            return $prefix.'1';
-//        }
-//        $maxId = substr($stringId, strlen($prefix))*1 ;
-//        return $prefix.($maxId+1);
-//    }
+    public static function auto_id()
+    {
+        $stringId = DB::table('CayXanh')->pluck('id');
+        $lenPrefix = strlen('CX');
+        $idList = [];
+        foreach ($stringId as $id)
+        {
+            array_push($idList, (int) substr($id, $lenPrefix));
+        }
+        return max($idList)+1;
+    }
 }
