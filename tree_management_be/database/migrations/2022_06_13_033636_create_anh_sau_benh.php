@@ -14,9 +14,10 @@ class CreateAnhSauBenh extends Migration
     public function up()
     {
         Schema::create('AnhSauBenh', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("hinhAnh")->nullable();
-            $table->unsignedBigInteger("idSauBenh")->nullable();
+            $table->string("idSauBenh")->nullable();
             $table->timestamps();
             $table->foreign('idSauBenh')->references('id')->on('TinhTrangSauBenh');
         });

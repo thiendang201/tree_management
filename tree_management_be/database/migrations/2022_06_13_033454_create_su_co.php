@@ -14,14 +14,15 @@ class CreateSuCo extends Migration
     public function up()
     {
         Schema::create('SuCo', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tieuDe")->nullable();
             $table->string("loaiSuCo")->nullable();
             $table->longText("moTa")->nullable();
             $table->string("hinhAnh")->nullable();
 //            $table->dateTime("")->nullable();
             $table->string('trangThai')->nullable();
-            $table->unsignedBigInteger("idCay")->nullable();
+            $table->string("idCay")->nullable();
             $table->timestamps();
             $table->foreign('idCay')->references('id')->on('CayXanh');
         });

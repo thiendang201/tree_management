@@ -14,9 +14,10 @@ class CreateAnhCay extends Migration
     public function up()
     {
         Schema::create('AnhCay', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("hinhAnh")->nullable();
-            $table->unsignedBigInteger("idCay")->nullable();
+            $table->string("idCay")->nullable();
             $table->timestamps();
             $table->foreign('idCay')->references('id')->on('CayXanh');
         });

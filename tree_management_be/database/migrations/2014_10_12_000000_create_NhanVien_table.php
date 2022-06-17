@@ -14,7 +14,8 @@ class CreateNhanVienTable extends Migration
     public function up()
     {
         Schema::create('NhanVien', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string('tenNV')->nullable();
             $table->string("hinhAnh")->nullable();
             $table->string("CCCD")->nullable();

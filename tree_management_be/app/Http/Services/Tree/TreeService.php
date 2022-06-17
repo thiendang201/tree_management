@@ -3,15 +3,25 @@
 namespace App\Http\Services\Tree;
 
 use App\Models\CayXanh;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\Helper;
 
 class TreeService
 {
-    public function getAll(){
-        return CayXanh::all();
+    public function getAll($id){
+        return $id?CayXanh::find($id):CayXanh::all();
     }
+
+//    public function getById($id){
+//        return CayXanh::find($id);
+//    }
 
     public function create($request){
         $tree = new CayXanh;
+        $prefix='CX';
+        $table='CayXanh';
+        $id = Helper::auto_id($prefix, $table);
+        $tree->id = $id;
         $tree->tenCay = $request->tenCay;
         $tree->viTri = $request->viTri;
         $tree->ngayTrong = $request->ngayTrong;
@@ -56,5 +66,12 @@ class TreeService
         {
             return ["result"=>"delete error"];
         }
+    }
+
+    public function search($request)
+    {
+        $keyword = $request->input('keyword');
+        $rs = DB::table('cayxanh')->where('tenCay', 'like', '%'.$keyword.'%')->get();
+        return $rs;
     }
 }

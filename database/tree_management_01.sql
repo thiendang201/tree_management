@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th6 13, 2022 lúc 06:10 AM
+-- Thời gian đã tạo: Th6 17, 2022 lúc 06:23 AM
 -- Phiên bản máy phục vụ: 10.4.21-MariaDB
 -- Phiên bản PHP: 8.0.10
 
@@ -17,12 +17,11 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
-create database if not exists tree_management;
-use tree_management;
-
 --
 -- Cơ sở dữ liệu: `tree_management_01`
 --
+create database if not exists tree_management;
+use tree_management;
 
 -- --------------------------------------------------------
 
@@ -31,9 +30,9 @@ use tree_management;
 --
 
 CREATE TABLE `anhcay` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `hinhAnh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idCay` bigint(20) UNSIGNED DEFAULT NULL,
+  `idCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -45,9 +44,9 @@ CREATE TABLE `anhcay` (
 --
 
 CREATE TABLE `anhsaubenh` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `hinhAnh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idSauBenh` bigint(20) UNSIGNED DEFAULT NULL,
+  `idSauBenh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -59,15 +58,22 @@ CREATE TABLE `anhsaubenh` (
 --
 
 CREATE TABLE `cayxanh` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `viTri` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngayTrong` date DEFAULT NULL,
   `trangThai` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idLoaiCay` bigint(20) UNSIGNED DEFAULT NULL,
+  `idLoaiCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `cayxanh`
+--
+
+INSERT INTO `cayxanh` (`id`, `tenCay`, `viTri`, `ngayTrong`, `trangThai`, `idLoaiCay`, `created_at`, `updated_at`) VALUES
+('CX2', 'test api create 1', 'Hải Châu', '2022-06-09', '1', 'LC1', '2022-06-16 21:16:05', '2022-06-16 21:16:05');
 
 -- --------------------------------------------------------
 
@@ -76,13 +82,13 @@ CREATE TABLE `cayxanh` (
 --
 
 CREATE TABLE `congviec` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenCV` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `moTaTienDo` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngayBatDau` date DEFAULT NULL,
   `ngayKetThuc` date DEFAULT NULL,
   `ngayHoanThanh` date DEFAULT NULL,
-  `idKeHoach` bigint(20) UNSIGNED DEFAULT NULL,
+  `idKeHoach` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -110,14 +116,14 @@ CREATE TABLE `failed_jobs` (
 --
 
 CREATE TABLE `kehoach` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenKeHoach` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `moTa` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `diaDiem` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngayBatDau` date DEFAULT NULL,
   `ngayKetThuc` date DEFAULT NULL,
   `doUuTien` int(11) DEFAULT NULL,
-  `idNVPhuTrach` bigint(20) UNSIGNED DEFAULT NULL,
+  `idNVPhuTrach` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `trangThai` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -130,8 +136,8 @@ CREATE TABLE `kehoach` (
 --
 
 CREATE TABLE `kehoachcayxanh` (
-  `idCay` bigint(20) UNSIGNED NOT NULL,
-  `idKeHoach` bigint(20) UNSIGNED NOT NULL,
+  `idCay` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `idKeHoach` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -143,7 +149,7 @@ CREATE TABLE `kehoachcayxanh` (
 --
 
 CREATE TABLE `loaicay` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenLoaiCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `loaiRe` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `loaiThan` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -152,6 +158,13 @@ CREATE TABLE `loaicay` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `loaicay`
+--
+
+INSERT INTO `loaicay` (`id`, `tenLoaiCay`, `loaiRe`, `loaiThan`, `loaiLa`, `moTa`, `created_at`, `updated_at`) VALUES
+('LC1', 'Cây họ bàng', NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -178,14 +191,14 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (6, '2022_06_13_032150_update_nhan_vien', 1),
 (7, '2022_06_13_032623_create_loai_cay', 1),
 (8, '2022_06_13_032835_create_cay_xanh', 1),
-(9, '2022_06_13_033445_create_tinh_trang_sau_benh', 2),
-(10, '2022_06_13_033454_create_su_co', 2),
-(11, '2022_06_13_033508_create_ke_hoach', 2),
-(12, '2022_06_13_033521_create_cong_viec', 2),
-(13, '2022_06_13_033545_create_n_v_thuc_hien', 2),
-(14, '2022_06_13_033607_create_ke_hoach_cay_xanh', 2),
-(15, '2022_06_13_033626_create_anh_cay', 2),
-(16, '2022_06_13_033636_create_anh_sau_benh', 2);
+(9, '2022_06_13_033445_create_tinh_trang_sau_benh', 1),
+(10, '2022_06_13_033454_create_su_co', 1),
+(11, '2022_06_13_033508_create_ke_hoach', 1),
+(12, '2022_06_13_033521_create_cong_viec', 1),
+(13, '2022_06_13_033545_create_n_v_thuc_hien', 1),
+(14, '2022_06_13_033607_create_ke_hoach_cay_xanh', 1),
+(15, '2022_06_13_033626_create_anh_cay', 1),
+(16, '2022_06_13_033636_create_anh_sau_benh', 1);
 
 -- --------------------------------------------------------
 
@@ -194,8 +207,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 --
 
 CREATE TABLE `nhanvien` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tenNV` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tenNV` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `hinhAnh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `CCCD` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngaySinh` date DEFAULT NULL,
@@ -209,7 +222,7 @@ CREATE TABLE `nhanvien` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `trangThai` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idQuyen` bigint(20) UNSIGNED DEFAULT NULL
+  `idQuyen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -219,8 +232,8 @@ CREATE TABLE `nhanvien` (
 --
 
 CREATE TABLE `nvthuchien` (
-  `idCV` bigint(20) UNSIGNED NOT NULL,
-  `idNV` bigint(20) UNSIGNED NOT NULL,
+  `idCV` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `idNV` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -262,7 +275,7 @@ CREATE TABLE `personal_access_tokens` (
 --
 
 CREATE TABLE `quyen` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenQuyen` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
@@ -275,13 +288,13 @@ CREATE TABLE `quyen` (
 --
 
 CREATE TABLE `suco` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tieuDe` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `loaiSuCo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `moTa` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `hinhAnh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `trangThai` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `idCay` bigint(20) UNSIGNED DEFAULT NULL,
+  `idCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -293,13 +306,13 @@ CREATE TABLE `suco` (
 --
 
 CREATE TABLE `tinhtrangsaubenh` (
-  `id` bigint(20) UNSIGNED NOT NULL,
+  `id` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tenBenh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `moTa` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `mucDo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngayPhatBenh` date DEFAULT NULL,
   `ngayHet` date DEFAULT NULL,
-  `idCay` bigint(20) UNSIGNED DEFAULT NULL,
+  `idCay` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -423,45 +436,9 @@ ALTER TABLE `tinhtrangsaubenh`
 --
 
 --
--- AUTO_INCREMENT cho bảng `anhcay`
---
-ALTER TABLE `anhcay`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `anhsaubenh`
---
-ALTER TABLE `anhsaubenh`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `cayxanh`
---
-ALTER TABLE `cayxanh`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `congviec`
---
-ALTER TABLE `congviec`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT cho bảng `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `kehoach`
---
-ALTER TABLE `kehoach`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `loaicay`
---
-ALTER TABLE `loaicay`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -471,33 +448,9 @@ ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT cho bảng `nhanvien`
---
-ALTER TABLE `nhanvien`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT cho bảng `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `quyen`
---
-ALTER TABLE `quyen`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `suco`
---
-ALTER TABLE `suco`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT cho bảng `tinhtrangsaubenh`
---
-ALTER TABLE `tinhtrangsaubenh`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --

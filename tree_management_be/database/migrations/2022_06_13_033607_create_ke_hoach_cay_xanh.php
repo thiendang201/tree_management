@@ -14,8 +14,8 @@ class CreateKeHoachCayXanh extends Migration
     public function up()
     {
         Schema::create('KeHoachCayXanh', function (Blueprint $table) {
-            $table->unsignedBigInteger("idCay");
-            $table->unsignedBigInteger("idKeHoach");
+            $table->string("idCay");
+            $table->string("idKeHoach");
             $table->timestamps();
             $table->primary(['idCay', 'idKeHoach']);
             $table->foreign('idCay')->references('id')->on('CayXanh');
