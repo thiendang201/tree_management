@@ -30,7 +30,7 @@ Route::prefix("admin")->group(function (){
 //        Route::get("list/{id?}", [TreeController::class, 'index']);
         Route::post("create", [TreeController::class, 'create']);
         Route::put("update", [TreeController::class, 'update']);
-        Route::get("search", [TreeController::class, 'search']);
+//        Route::get("search", [TreeController::class, 'search']);
         Route::delete("delete/{id}", [TreeController::class, 'delete']);
         Route::post("search", [TreeController::class, 'search']);
 //        Route::get("id", [TreeController::class, 'auto_id']);
