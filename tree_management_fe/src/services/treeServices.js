@@ -1,8 +1,8 @@
 import { BASE_URL } from "../config";
 import { getData } from "./services";
 
-function treeCategories() {
-  const url = BASE_URL + "admin/tree/list";
+function treeCategoryList() {
+  const url = BASE_URL + "admin/tree-category/list";
   return getData(url);
 }
 
@@ -11,4 +11,4 @@ function treeList() {
   return getData(url);
 }
 
-export { treeCategories, treeList };
+export { treeCategoryList, treeList };
