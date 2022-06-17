@@ -72,11 +72,14 @@ class TreeService
 
     public function delete($request)
     {
-        $listId = $request;
-        return $listId;
-        $tree = CayXanh::find($listId);
-        $tree->trangThai = '0';
-        $result = $tree->save();
+        $listId = $request->input('ids');
+//        return $listId;
+        foreach ($listId as $id)
+        {
+            $tree = CayXanh::find($id);
+            $tree->trangThai = '0';
+            $result = $tree->save();
+        }
         if ($result)
         {
             return ["result"=>"delete success"];

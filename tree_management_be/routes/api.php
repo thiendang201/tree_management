@@ -31,7 +31,7 @@ Route::prefix("admin")->group(function (){
         Route::put("update", [TreeController::class, 'update']);
         Route::put("delete", [TreeController::class, 'delete']);
         Route::post("search", [TreeController::class, 'search']);
-        Route::get("id", [TreeController::class, 'auto_id']);
+//        Route::get("id", [TreeController::class, 'auto_id']);
     });
     Route::prefix("plan")->group(function (){
         Route::get("list", [PlanController::class, 'index']);
