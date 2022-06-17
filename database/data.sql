@@ -97,7 +97,7 @@ BEFORE UPDATE
 ON keHoach
 FOR EACH ROW
 BEGIN
-	DECLARE plan_id INT;
+	DECLARE plan_id VARCHAR(255);
 	DECLARE count_work INT;
     DECLARE count_work_finished INT;
     SET plan_id = new.id;
@@ -125,7 +125,7 @@ AFTER UPDATE
 ON congviec
 FOR EACH ROW
 BEGIN
-    DECLARE plan_id INT;
+    DECLARE plan_id VARCHAR(255);
     DECLARE count_work INT;
     DECLARE count_work_finished INT;
     DECLARE count_work_overdued INT;
@@ -158,7 +158,7 @@ CREATE PROCEDURE TimKiemCayXanh (
     IN tuKhoa NVARCHAR(255),
     IN viTri NVARCHAR(255), 
     IN tuoi INT,
-    IN idLC INT
+    IN idLC VARCHAR(255)
 )
 BEGIN
     SELECT 
@@ -184,7 +184,7 @@ CREATE PROCEDURE ThongKeCayXanh (
     IN tinhTrang CHAR(1),
     IN viTri NVARCHAR(255), 
     IN tuoi INT,
-    IN idLC INT
+    IN idLC VARCHAR(255)
 )
 BEGIN
     IF  tinhTrang = '1' THEN 
@@ -263,7 +263,7 @@ DROP PROCEDURE IF EXISTS get_staff_execute_by_plan_id;
 DELIMITER $$
 CREATE PROCEDURE get_staff_execute_by_plan_id
 (
-    IN plan_id INT(11)
+    IN plan_id VARCHAR(255)
 )
 BEGIN
 	SELECT `kehoach`.`id` ,`nhanvien`.`tenNV`

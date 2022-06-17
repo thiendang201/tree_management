@@ -21,11 +21,10 @@ class TreeService
         return DB::table('CayXanh')
             ->leftJoin('AnhCay', 'AnhCay.idCay', 'CayXanh.id')
             ->where('CayXanh.trangThai', '=', '1')
-            ->orderBy('CayXanh.id')
-            ->orderBy('AnhCay.id')
+            ->orderBy('CayXanh.created_at')
+            ->orderBy('AnhCay.created_at')
             ->groupBy('CayXanh.id')
             ->paginate($this->limit, $this->fields);
-//            ->get(array('CayXanh.*','AnhCay.hinhAnh as hinhAnh'));
     }
 
     public function getById($id){

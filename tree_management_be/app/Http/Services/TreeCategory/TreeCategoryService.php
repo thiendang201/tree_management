@@ -8,7 +8,8 @@ class TreeCategoryService
 {
     public function getAll(){
         return DB::table('LoaiCay')
-            ->join("CayXanh", "CayXanh.idLoaiCay", "LoaiCay.id")
+            ->leftJoin("CayXanh", "CayXanh.idLoaiCay", "LoaiCay.id")
+            ->orderBy('LoaiCay.created_at')
             ->groupBy('idLoaiCay')
             ->get([
                 "LoaiCay.id",

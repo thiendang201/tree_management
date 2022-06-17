@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\StatisticController;
 use App\Http\Controllers\Api\Admin\TreeController;
 use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\TreeCategoryController;
@@ -27,6 +28,7 @@ Route::prefix("admin")->group(function (){
 
     Route::prefix("tree")->group(function (){
         Route::get("list", [TreeController::class, 'index']);
+        Route::get("list/{id}", [TreeController::class, 'getById']);
         Route::post("create", [TreeController::class, 'create']);
         Route::put("update", [TreeController::class, 'update']);
         Route::put("delete", [TreeController::class, 'delete']);
@@ -40,5 +42,11 @@ Route::prefix("admin")->group(function (){
         Route::get("search", [PlanController::class, 'search']);
         Route::delete("delete/{id}", [PlanController::class, 'delete']);
 
+    });
+    Route::prefix("statistic")->group(function(){
+        Route::post("tree", [StatisticController::class, 'statisticTree']);
+        Route::get("trouble", [StatisticController::class, 'statisticTrouble']);
+        Route::get("plan", [StatisticController::class, 'statisticPlan']);
+        Route::get("staff-by-plan", [StatisticController::class, 'getStaffByPlan']);
     });
 });
