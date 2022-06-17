@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\Tree\TreeService;
-use App\Models\CayXanh;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TreeController extends Controller
 {
@@ -16,11 +16,17 @@ class TreeController extends Controller
         $this->treeService=$treeService;
     }
 
-    public function index()
+    public function index($id=null)
     {
-        $trees = $this->treeService->getAll();
+        $trees = $this->treeService->getAll($id);
         return $trees;
     }
+
+//    public function getById($id)
+//    {
+//        $trees = $this->treeService->getById($id);
+//        return $trees;
+//    }
 
     public function create(Request $request)
     {
@@ -39,4 +45,23 @@ class TreeController extends Controller
         $result = $this->treeService->delete($id);
         return $result;
     }
+
+    public function search(Request $request)
+    {
+        $result = $this->treeService->search($request);
+        return $result;
+    }
+
+//    public static function auto_id()
+//    {
+//        $prefix='CX';
+//        $table='CayXanh';
+//        $stringId = DB::table($table)->orderByDesc('id')->pluck('id')[0];
+//        if ($stringId==null)
+//        {
+//            return $prefix.'1';
+//        }
+//        $maxId = substr($stringId, strlen($prefix))*1 ;
+//        return $prefix.($maxId+1);
+//    }
 }

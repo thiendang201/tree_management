@@ -16,7 +16,7 @@ class UpdateNhanVien extends Migration
         //
         Schema::table('NhanVien', function (Blueprint $table){
             $table->string('trangThai')->nullable();
-            $table->unsignedBigInteger('idQuyen')->nullable();
+            $table->string('idQuyen')->nullable();
             $table->foreign('idQuyen')->references('id')->on('Quyen');
         });
     }

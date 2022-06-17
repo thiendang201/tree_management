@@ -14,12 +14,13 @@ class CreateCayXanh extends Migration
     public function up()
     {
         Schema::create('CayXanh', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenCay")->nullable();
             $table->string("viTri")->nullable();
             $table->date("ngayTrong")->nullable();
             $table->string("trangThai")->nullable();
-            $table->unsignedBigInteger("idLoaiCay")->nullable();
+            $table->string("idLoaiCay")->nullable();
             $table->timestamps();
             $table->foreign('idLoaiCay')->references('id')->on('LoaiCay');
         });

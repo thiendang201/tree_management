@@ -14,8 +14,8 @@ class CreateNVThucHien extends Migration
     public function up()
     {
         Schema::create('NVThucHien', function (Blueprint $table) {
-            $table->unsignedBigInteger("idCV");
-            $table->unsignedBigInteger("idNV");
+            $table->string("idCV");
+            $table->string("idNV");
             $table->timestamps();
             $table->primary(['idCV', 'idNV']);
             $table->foreign('idCV')->references('id')->on('CongViec');

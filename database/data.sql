@@ -228,7 +228,7 @@ CREATE PROCEDURE statistic_trouble
     IN created_year INT(11)
 )
 BEGIN
-	SELECT * FROM `suco` WHERE YEAR(`tgianXayRa`) = created_year;
+	SELECT * FROM `suco` WHERE YEAR(`created_at`) = created_year;
 END$$ 
 DELIMITER ;
 

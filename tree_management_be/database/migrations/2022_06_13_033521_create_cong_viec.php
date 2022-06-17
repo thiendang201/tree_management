@@ -14,13 +14,14 @@ class CreateCongViec extends Migration
     public function up()
     {
         Schema::create('CongViec', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenCV")->nullable();
             $table->longText("moTaTienDo")->nullable();
             $table->date("ngayBatDau")->nullable();
             $table->date("ngayKetThuc")->nullable();
             $table->date("ngayHoanThanh")->nullable();
-            $table->unsignedBigInteger("idKeHoach")->nullable();
+            $table->string("idKeHoach")->nullable();
             $table->timestamps();
             $table->foreign('idKeHoach')->references('id')->on('KeHoach');
         });

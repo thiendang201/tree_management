@@ -14,14 +14,15 @@ class CreateKeHoach extends Migration
     public function up()
     {
         Schema::create('KeHoach', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenKeHoach")->nullable();
             $table->longText("moTa")->nullable();
             $table->string("diaDiem")->nullable();
             $table->date("ngayBatDau")->nullable();
             $table->date("ngayKetThuc")->nullable();
             $table->integer("doUuTien")->nullable();
-            $table->unsignedBigInteger("idNVPhuTrach")->nullable();
+            $table->string("idNVPhuTrach")->nullable();
             $table->string("trangThai")->nullable();
             $table->timestamps();
             $table->foreign('idNVPhuTrach')->references('id')->on('NhanVien');

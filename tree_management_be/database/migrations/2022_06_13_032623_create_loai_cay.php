@@ -14,7 +14,8 @@ class CreateLoaiCay extends Migration
     public function up()
     {
         Schema::create('LoaiCay', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenLoaiCay")->nullable();
             $table->string("loaiRe")->nullable();
             $table->string("loaiThan")->nullable();

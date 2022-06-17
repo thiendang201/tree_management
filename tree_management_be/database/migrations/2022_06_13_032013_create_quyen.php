@@ -14,7 +14,8 @@ class CreateQuyen extends Migration
     public function up()
     {
         Schema::create('Quyen', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenQuyen")->nullable();
             $table->timestamps();
         });

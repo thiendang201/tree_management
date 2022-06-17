@@ -14,13 +14,14 @@ class CreateTinhTrangSauBenh extends Migration
     public function up()
     {
         Schema::create('TinhTrangSauBenh', function (Blueprint $table) {
-            $table->id();
+            $table->string("id");
+            $table->primary(['id']);
             $table->string("tenBenh")->nullable();
             $table->longText("moTa")->nullable();
             $table->string("mucDo")->nullable();
             $table->date("ngayPhatBenh")->nullable();
             $table->date("ngayHet")->nullable();
-            $table->unsignedBigInteger("idCay")->nullable();
+            $table->string("idCay")->nullable();
             $table->timestamps();
             $table->foreign('idCay')->references('id')->on('CayXanh');
         });
