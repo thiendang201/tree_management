@@ -6,8 +6,8 @@ function treeCategoryList() {
   return getData(url);
 }
 
-function treeList() {
-  const url = BASE_URL + "admin/tree/list";
+function treeList(page) {
+  const url = BASE_URL + "admin/tree/list?page=" + page;
   return getData(url);
 }
 

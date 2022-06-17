@@ -21,15 +21,18 @@ const Tree = () => {
   const [treeIds, setTreeIds] = useState([]);
   const [openTreeDeleteDialog, setOpenTreeDeleteDialog] = useState(false);
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async function () {
-      const trees = await treeList();
-      setTrees(trees);
-      console.log(trees);
+      const { data } = await treeList(page);
+      setTrees((prev) => {
+        const ListId = prev.map(({ id }) => id);
+        setTrees([...prev, ...data.filter(({ id }) => !ListId.includes(id))]);
+      });
     };
     fetchData();
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
