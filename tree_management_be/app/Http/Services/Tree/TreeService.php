@@ -12,9 +12,20 @@ class TreeService
 //        return $id?CayXanh::find($id):CayXanh::all();
 //    }
 
+    protected $limit = 3;
+    protected $fields = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
+    protected $field_search = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
+
     public function getAll(){
 //        return CayXanh::all();
-        return DB::table('CayXanh')->get();
+        return DB::table('CayXanh')
+            ->leftJoin('AnhCay', 'AnhCay.idCay', 'CayXanh.id')
+            ->where('CayXanh.trangThai', '=', '1')
+            ->orderBy('CayXanh.id')
+            ->orderBy('AnhCay.id')
+            ->groupBy('CayXanh.id')
+            ->paginate($this->limit, $this->fields);
+//            ->get(array('CayXanh.*','AnhCay.hinhAnh as hinhAnh'));
     }
 
     public function getById($id){
@@ -75,8 +86,19 @@ class TreeService
 
     public function search($request)
     {
-        $keyword = $request->input('keyword');
-        $rs = DB::table('cayxanh')->where('tenCay', 'like', '%'.$keyword.'%')->get();
-        return $rs;
+//        $keyword = $request->input('keyword');
+//        $rs = DB::table('cayxanh')->where('tenCay', 'like', '%'.$keyword.'%')->get();
+//        return $rs;
+        $tree_name = $request->input('tenCay');
+        $area = $request->input('khuVuc');
+        $tree_age = $request->input('tuoiCay');
+        $tree_category = $request->input('loaiCay');
+        $result = DB::table('cayxanh')
+            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay')
+            ->where($tree_name, 'like', "%".$tree_name."%")
+            ->where($area, 'like', "%".$area."%")
+            ->where($tree_age, 'like', "%".$tree_age."%")
+            ->where($tree_category, 'like', "%".$tree_category."%")
+            ->paginate($this->limit, $this->fields);;
     }
 }
