@@ -82,13 +82,13 @@ BEGIN
 END$$
 DELIMITER ;
 
-SET GLOBAL time_zone = '+7:00';
-select current_date();
+-- SET GLOBAL time_zone = '+7:00';
+-- select current_date();
 
-delete from keHoach where tenKeHoach = 'Test';
-INSERT INTO `KeHoach` (`tenKeHoach`, `ngayBatDau`, `ngayKetThuc`) VALUES	
-(N'Test','2022/06/17','2022/04/30');
-select id, tenKeHoach, trangThai from keHoach where tenKeHoach = "Test";
+-- delete from keHoach where tenKeHoach = 'Test';
+-- INSERT INTO `KeHoach` (`tenKeHoach`, `ngayBatDau`, `ngayKetThuc`) VALUES	
+-- (N'Test','2022/06/17','2022/04/30');
+-- select id, tenKeHoach, trangThai from keHoach where tenKeHoach = "Test";
 
 DROP TRIGGER IF EXISTS tg_kh_TrangThaiKeHoach_update;
 DELIMITER $$
@@ -113,10 +113,10 @@ BEGIN
 END$$
 DELIMITER ;
 
-SELECT COUNT(congviec.ngayHoanThanh) FROM congviec WHERE congviec.idKeHoach = 16;
-SELECT COUNT(congviec.ngayHoanThanh) FROM congviec WHERE congviec.idKeHoach = 16 AND congviec.ngayHoanThanh IS NOT NULL;
-update keHoach set ngayBatDau = '2022/06/28' where tenKeHoach = "Test";
-select id, tenKeHoach, ngayBatDau, trangThai from keHoach where tenKeHoach = "Test";
+-- SELECT COUNT(congviec.ngayHoanThanh) FROM congviec WHERE congviec.idKeHoach = 16;
+-- SELECT COUNT(congviec.ngayHoanThanh) FROM congviec WHERE congviec.idKeHoach = 16 AND congviec.ngayHoanThanh IS NOT NULL;
+-- update keHoach set ngayBatDau = '2022/06/28' where tenKeHoach = "Test";
+-- select id, tenKeHoach, ngayBatDau, trangThai from keHoach where tenKeHoach = "Test";
 
 DROP TRIGGER IF EXISTS tg_after_update_work;
 DELIMITER $$
@@ -147,10 +147,10 @@ BEGIN
 END$$
 DELIMITER ;
 
-update congViec set ngayHoanThanh = null where idKeHoach = 3;
-select id, tenKeHoach, trangThai from keHoach where id = 3;
-update congViec set ngayHoanThanh = '2022-06-17' where idKeHoach = 3;
-select id, tenKeHoach, trangThai from keHoach where id = 3;
+-- update congViec set ngayHoanThanh = null where idKeHoach = 3;
+-- select id, tenKeHoach, trangThai from keHoach where id = 3;
+-- update congViec set ngayHoanThanh = '2022-06-17' where idKeHoach = 3;
+-- select id, tenKeHoach, trangThai from keHoach where id = 3;
 
 DROP PROCEDURE if exists TimKiemCayXanh;
 DELIMITER $$
@@ -176,7 +176,7 @@ BEGIN
 END$$
 DELIMITER ;
 
-CALL TimKiemCayXanh(N'cây', N'Hải Châu', 1, 3);
+-- CALL TimKiemCayXanh(N'cây', N'Hải Châu', 1, 3);
 
 DROP PROCEDURE if exists ThongKeCayXanh;
 DELIMITER $$
@@ -222,7 +222,7 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
-CALL ThongKeCayXanh('0', N'Hải Châu', 1, 3);
+-- CALL ThongKeCayXanh('0', N'Hải Châu', 1, 3);
 
 DROP PROCEDURE IF EXISTS statistic_trouble;
 DELIMITER $$
@@ -235,7 +235,7 @@ BEGIN
 END$$ 
 DELIMITER ;
 
-CALL statistic_trouble(2021);
+-- CALL statistic_trouble(2021);
 
 
 -- SELECT * FROM `kehoach` WHERE `kehoach`.`trangThai`='1' AND MONTH(`kehoach`.`ngayBatDau`)=5 AND YEAR(`kehoach`.`ngayBatDau`)=2022;
@@ -257,7 +257,7 @@ BEGIN
 END$$ 
 DELIMITER ;
 
-CALL statistic_plan(5, 2022, '2');
+-- CALL statistic_plan(5, 2022, '2');
 
 DROP PROCEDURE IF EXISTS get_staff_execute_by_plan_id;
 DELIMITER $$
@@ -275,7 +275,7 @@ BEGIN
 END$$ 
 DELIMITER ;
 
-CALL get_staff_execute_by_plan_id(1);
+-- CALL get_staff_execute_by_plan_id(1);
 
 -- DROP FUNCTION IF EXISTS func_idTuTang;
 -- DELIMITER $$

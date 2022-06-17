@@ -27,9 +27,9 @@ class TreeService
             ->paginate($this->limit, $this->fields);
     }
 
-    public function getById($id){
-        return CayXanh::find($id);
-    }
+//    public function getById($id){
+//        return CayXanh::find($id);
+//    }
 
     public function create($request){
         $tree = new CayXanh;

@@ -72,9 +72,6 @@ CREATE TABLE `cayxanh` (
 -- Đang đổ dữ liệu cho bảng `cayxanh`
 --
 
-INSERT INTO `cayxanh` (`id`, `tenCay`, `viTri`, `ngayTrong`, `trangThai`, `idLoaiCay`, `created_at`, `updated_at`) VALUES
-('CX2', 'test api create 1', 'Hải Châu', '2022-06-09', '1', 'LC1', '2022-06-16 21:16:05', '2022-06-16 21:16:05');
-
 -- --------------------------------------------------------
 
 --
@@ -162,14 +159,6 @@ CREATE TABLE `loaicay` (
 --
 -- Đang đổ dữ liệu cho bảng `loaicay`
 --
-
-INSERT INTO `loaicay` (`id`, `tenLoaiCay`, `loaiRe`, `loaiThan`, `loaiLa`, `moTa`, `created_at`, `updated_at`) VALUES
-('LC1', 'Cây họ bàng', NULL, NULL, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Cấu trúc bảng cho bảng `migrations`
 --
 
 CREATE TABLE `migrations` (

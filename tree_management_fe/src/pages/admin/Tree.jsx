@@ -6,143 +6,63 @@ import { FaListUl } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
 import Button from "../../shared/Button";
 import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous20Filled";
-import { buttonColor, primaryColor } from "../../config";
+import { BASE_URL, buttonColor, primaryColor } from "../../config";
 import TreeCard from "../../components/tree/TreeCard";
 import TypeOfTree from "../../components/tree/TypeOfTree";
 import DeleteDialog from "../../shared/DeleteDialog";
 import { useNavigate } from "react-router-dom";
+import { treeCategoryList, treeList } from "../../services/treeServices";
 
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
   const [trees, setTrees] = useState([]);
-  const [typesOfTrees, setTypesOfTrees] = useState([]);
+  const [treeCategories, setTreeCategories] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [treeIds, setTreeIds] = useState([]);
   const [openTreeDeleteDialog, setOpenTreeDeleteDialog] = useState(false);
   const navigate = useNavigate();
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const trees = [
-      {
-        id: 1,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 2,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 3,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 4,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 5,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 6,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 7,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 8,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-    ];
-    setTrees(trees);
-  }, []);
+    const fetchData = async function () {
+      const { data } = await treeList(page);
+      setTrees((prev) => {
+        const ListId = prev.map(({ id }) => id);
+        setTrees([...prev, ...data.filter(({ id }) => !ListId.includes(id))]);
+      });
+    };
+    fetchData();
+  }, [page]);
 
   useEffect(() => {
     const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
-    const typesOfTrees = [
-      {
-        id: 1,
-        name: "Cây họ bàng",
-        treeQty: 235,
-      },
-      {
-        id: 2,
-        name: "Cây lá rộng",
-        treeQty: 397,
-      },
-      {
-        id: 3,
-        name: "Cây lá nhỏ",
-        treeQty: 176,
-      },
-      {
-        id: 4,
-        name: "Cây họ cau",
-        treeQty: 80,
-      },
-      {
-        id: 5,
-        name: "Cây họ cọ",
-
-        treeQty: 112,
-      },
-      {
-        id: 6,
-        name: "Cây họ A",
-
-        treeQty: 32,
-      },
-      {
-        id: 7,
-        name: "Cây họ B",
-
-        treeQty: 11,
-      },
-    ];
-    typesOfTrees.sort(({ treeQty: a }, { treeQty: b }) => b - a);
-    const total = typesOfTrees.reduce(
-      (sum, { treeQty }) => (sum += treeQty),
-      0
-    );
-    const list = typesOfTrees.map((type) => {
-      return {
-        ...type,
-        ratio: (type.treeQty / total) * 100,
-        color: colors.shift() || "#A8A8A8",
-      };
-    });
-    const other = list.slice(5).reduce(
-      (pre, cur) => {
+    const fetchData = async function () {
+      const categories = await treeCategoryList();
+      categories.sort(({ count: a }, { count: b }) => b - a);
+      const total = categories.reduce((sum, { count }) => (sum += count), 0);
+      const list = categories.map((category) => {
         return {
-          ...pre,
-          treeQty: pre.treeQty + cur.treeQty,
-          ratio: pre.ratio + cur.ratio,
+          ...category,
+          ratio: (category.treeQty / total) * 100,
+          color: colors.shift() || "#A8A8A8",
         };
-      },
-      { name: "Khác", treeQty: 0, ratio: 0, color: "#A8A8A8" }
-    );
-    const chartData = list.slice(0, 5);
-    chartData.push(other);
-    setChartData(chartData);
-    setTypesOfTrees(list);
+      });
+      const other = list.slice(5).reduce(
+        (pre, cur) => {
+          return {
+            ...pre,
+            treeQty: pre.count + cur.count,
+            ratio: pre.ratio + cur.ratio,
+          };
+        },
+        { tenLoaicay: "Khác", count: 0, ratio: 0, color: "#A8A8A8" }
+      );
+      const chartData = list.slice(0, 5);
+      chartData.push(other);
+      setChartData(chartData);
+      setTreeCategories(list);
+    };
+    fetchData();
   }, []);
 
   const selectAll = (e) => {
@@ -282,16 +202,16 @@ const Tree = () => {
           </div>
         </div>
         <div className="h-[5rem] mt-[1.2rem]">
-          {chartData.map(({ name, treeQty, ratio, color }, index) => (
+          {chartData.map(({ tenLoaicay, count, ratio, color }, index) => (
             <div
               key={index}
               style={{ width: ratio + "%", backgroundColor: color }}
               className="h-[100%] inline-block relative group first:rounded-l-[0.4rem] last:rounded-r-[0.4rem]"
             >
               <div className="group-hover:top-[50%] group-hover:opacity-100 group-hover:visible p-[0.6rem] shadow-md absolute bg-white min-w-max right-0 rounded-[0.4rem] top-[55%] transition-all duration-300 opacity-0 invisible">
-                <strong>{name}</strong>
+                <strong>{tenLoaicay}</strong>
                 <br />
-                <span className="">{treeQty} cây</span>
+                <span className="">{count} cây</span>
               </div>
             </div>
           ))}
@@ -306,8 +226,8 @@ const Tree = () => {
             </tr>
           </thead>
           <tbody>
-            {typesOfTrees.map((type) => (
-              <TypeOfTree key={type.id} {...type} />
+            {treeCategories.map((cate) => (
+              <TypeOfTree key={cate.id} {...cate} />
             ))}
           </tbody>
         </table>
