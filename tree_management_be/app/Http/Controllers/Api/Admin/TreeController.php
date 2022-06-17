@@ -16,17 +16,23 @@ class TreeController extends Controller
         $this->treeService=$treeService;
     }
 
-    public function index($id=null)
+//    public function index($id=null)
+//    {
+//        $trees = $this->treeService->getAll($id);
+//        return $trees;
+//    }
+
+    public function index()
     {
-        $trees = $this->treeService->getAll($id);
+        $trees = $this->treeService->getAll();
         return $trees;
     }
 
-//    public function getById($id)
-//    {
-//        $trees = $this->treeService->getById($id);
-//        return $trees;
-//    }
+    public function getById($id)
+    {
+        $trees = $this->treeService->getById($id);
+        return $trees;
+    }
 
     public function create(Request $request)
     {

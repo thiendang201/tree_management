@@ -20,9 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::prefix("admin")->group(function (){
     Route::prefix("tree")->group(function (){
-//        Route::get("list", [TreeController::class, 'index']);
-//        Route::get("getById/{id?}", [TreeController::class, 'getById']);
-        Route::get("list/{id?}", [TreeController::class, 'index']);
+        Route::get("list", [TreeController::class, 'index']);
+        Route::get("list/{id}", [TreeController::class, 'getById']);
+//        Route::get("list/{id?}", [TreeController::class, 'index']);
         Route::post("create", [TreeController::class, 'create']);
         Route::put("update", [TreeController::class, 'update']);
         Route::get("search", [TreeController::class, 'search']);

@@ -8,13 +8,18 @@ use App\Helpers\Helper;
 
 class TreeService
 {
-    public function getAll($id){
-        return $id?CayXanh::find($id):CayXanh::all();
+//    public function getAll($id){
+//        return $id?CayXanh::find($id):CayXanh::all();
+//    }
+
+    public function getAll(){
+//        return CayXanh::all();
+        return DB::table('CayXanh')->get();
     }
 
-//    public function getById($id){
-//        return CayXanh::find($id);
-//    }
+    public function getById($id){
+        return CayXanh::find($id);
+    }
 
     public function create($request){
         $tree = new CayXanh;
