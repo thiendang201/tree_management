@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KeHoach extends Model
+class CongViec extends Model
 {
     use HasFactory;
-    protected $table = 'KeHoach';
+    protected $table = 'CongViec';
     
 }

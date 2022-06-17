@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\TreeController;
+use App\Http\Controllers\Api\Admin\PlanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
