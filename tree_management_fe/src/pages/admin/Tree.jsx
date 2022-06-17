@@ -11,7 +11,7 @@ import TreeCard from "../../components/tree/TreeCard";
 import TypeOfTree from "../../components/tree/TypeOfTree";
 import DeleteDialog from "../../shared/DeleteDialog";
 import { useNavigate } from "react-router-dom";
-import { getData } from "../../services/services";
+import { treeList } from "../../services/treeServices";
 
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
@@ -24,7 +24,7 @@ const Tree = () => {
 
   useEffect(() => {
     const fetchData = async function () {
-      const trees = await getData(BASE_URL + "admin/tree/list");
+      const trees = await treeList();
       setTrees(trees);
     };
     fetchData();
