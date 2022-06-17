@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\TreeController;
+use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\TreeCategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,13 +27,18 @@ Route::prefix("admin")->group(function (){
 
     Route::prefix("tree")->group(function (){
         Route::get("list", [TreeController::class, 'index']);
-        Route::get("list/{id}", [TreeController::class, 'getById']);
-//        Route::get("list/{id?}", [TreeController::class, 'index']);
         Route::post("create", [TreeController::class, 'create']);
         Route::put("update", [TreeController::class, 'update']);
-//        Route::get("search", [TreeController::class, 'search']);
-        Route::delete("delete/{id}", [TreeController::class, 'delete']);
+        Route::put("delete", [TreeController::class, 'delete']);
         Route::post("search", [TreeController::class, 'search']);
 //        Route::get("id", [TreeController::class, 'auto_id']);
+    });
+    Route::prefix("plan")->group(function (){
+        Route::get("list", [PlanController::class, 'index']);
+        Route::post("create", [PlanController::class, 'create']);
+        Route::put("update", [PlanController::class, 'update']);
+        Route::get("search", [PlanController::class, 'search']);
+        Route::delete("delete/{id}", [PlanController::class, 'delete']);
+
     });
 });
