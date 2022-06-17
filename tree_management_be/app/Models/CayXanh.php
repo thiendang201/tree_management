@@ -9,4 +9,9 @@ class CayXanh extends Model
 {
     use HasFactory;
     protected $table = 'CayXanh';
+
+    public function AnhCays()
+    {
+        return $this->hasMany(AnhCay::class, 'idCay', 'id');
+    }
 }

@@ -12,9 +12,16 @@ class TreeService
 //        return $id?CayXanh::find($id):CayXanh::all();
 //    }
 
+    protected $limit = 5;
+    protected $fields = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
+
     public function getAll(){
 //        return CayXanh::all();
-        return DB::table('CayXanh')->get();
+        return DB::table('CayXanh')
+            ->join('AnhCay', 'AnhCay.idCay', 'CayXanh.id')
+            ->where('CayXanh.trangThai', '=', '1')
+            ->groupBy('CayXanh.id')
+            ->paginate(3, $this->fields);
     }
 
     public function getById($id){
