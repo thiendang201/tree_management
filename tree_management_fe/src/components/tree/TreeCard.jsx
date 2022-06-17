@@ -1,8 +1,10 @@
+import DefaultImg from "../../assets/images/default.jpg";
+
 const TreeCard = ({
   id,
-  name,
-  location,
-  img,
+  tenCay,
+  viTri,
+  hinhAnh,
   onClick = undefined,
   checked,
   handleCheck,
@@ -13,7 +15,7 @@ const TreeCard = ({
       onClick={onClick}
     >
       <div
-        style={{ backgroundImage: `url(${img})` }}
+        style={{ backgroundImage: `url(${hinhAnh || DefaultImg})` }}
         className="relative rounded-[1.2rem] pt-[100%] bg-center bg-no-repeat bg-cover shadow-lg"
       >
         <input
@@ -24,9 +26,9 @@ const TreeCard = ({
         />
       </div>
       <div className="mt-[2.2rem] pb-1 text-center">
-        <h2 className="font-semibold text-[1.4rem]">#{id}</h2>
-        <h2 className="font-semibold text-[1.4rem]">{name}</h2>
-        <p className=" text-[1.2rem] mt-[0.4rem]">{location}</p>
+        <h2 className="font-semibold text-[1.4rem]">{id}</h2>
+        <h2 className="font-semibold text-[1.4rem]">{tenCay}</h2>
+        <p className=" text-[1.2rem] mt-[0.4rem]">{viTri}</p>
       </div>
     </div>
   );

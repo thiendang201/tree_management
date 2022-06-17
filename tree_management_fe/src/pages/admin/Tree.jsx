@@ -6,11 +6,12 @@ import { FaListUl } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
 import Button from "../../shared/Button";
 import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous20Filled";
-import { buttonColor, primaryColor } from "../../config";
+import { BASE_URL, buttonColor, primaryColor } from "../../config";
 import TreeCard from "../../components/tree/TreeCard";
 import TypeOfTree from "../../components/tree/TypeOfTree";
 import DeleteDialog from "../../shared/DeleteDialog";
 import { useNavigate } from "react-router-dom";
+import { getData } from "../../services/services";
 
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
@@ -22,57 +23,11 @@ const Tree = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const trees = [
-      {
-        id: 1,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 2,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 3,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 4,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 5,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 6,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 7,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-      {
-        id: 8,
-        name: "Cây sao đen",
-        img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-        location: "Nguyễn Văn Linh, Hải Châu",
-      },
-    ];
-    setTrees(trees);
+    const fetchData = async function () {
+      const trees = await getData(BASE_URL + "admin/tree/list");
+      setTrees(trees);
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {

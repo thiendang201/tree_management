@@ -258,6 +258,14 @@ const AddTree = () => {
               onChange={onDateChange}
               className="w-[100%]"
             />
+            <Input
+              name="viTri"
+              placeHolder="Điền vị trí"
+              label="Vị trí"
+              onChange={({ target: { value, name } }) => {
+                setTree({ ...tree, [name]: value });
+              }}
+            />
           </div>
         </div>
       </div>
