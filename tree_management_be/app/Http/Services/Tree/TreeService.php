@@ -36,13 +36,14 @@ class TreeService
             ->orderBy('CayXanh.created_at')
             ->orderBy('AnhCay.created_at')
             ->groupBy('CayXanh.id');
-        if ($all==0)
+//        return ['all'=> $all];
+        if ($all=="true")
         {
-            $result = $query->paginate($this->limit, $this->fields);
+            $result = $query->get($this->fields);
         }
         else
         {
-            $result = $query->get($this->fields);
+            $result = $query->paginate($this->limit, $this->fields);
         }
 
         return $result;
