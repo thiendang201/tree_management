@@ -13,9 +13,9 @@ class StaffController extends Controller
         $this->staffService=$staffService;
     }
 
-    public function getAll()
+    public function getAllByRole()
     {
-        $result = $this->staffService->getAll();
+        $result = $this->staffService->getAllByRole();
         return $result;
     }
 
