@@ -44,7 +44,7 @@ Route::prefix("admin")->group(function (){
         Route::delete("delete/{id}", [PlanController::class, 'delete']);
     });
     Route::prefix("staff")->group(function (){
-        Route::get("list",[StaffController::class, 'getAll']);
+        Route::get("list",[StaffController::class, 'getAllByRole']);
     });
     Route::prefix("statistic")->group(function(){
         Route::post("tree", [StatisticController::class, 'statisticTree']);
