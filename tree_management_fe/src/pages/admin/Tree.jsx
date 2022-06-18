@@ -6,7 +6,7 @@ import { FaListUl } from "react-icons/fa";
 import { RiSearchLine } from "react-icons/ri";
 import Button from "../../shared/Button";
 import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous20Filled";
-import { BASE_URL, buttonColor, primaryColor } from "../../config";
+import { buttonColor, primaryColor } from "../../config";
 import TreeCard from "../../components/tree/TreeCard";
 import TypeOfTree from "../../components/tree/TypeOfTree";
 import DeleteDialog from "../../shared/DeleteDialog";
@@ -28,7 +28,11 @@ const Tree = () => {
       const { data } = await treeList(page);
       setTrees((prev) => {
         const ListId = prev.map(({ id }) => id);
-        setTrees([...prev, ...data.filter(({ id }) => !ListId.includes(id))]);
+        const newt = [
+          ...prev,
+          ...data.filter(({ id }) => !ListId.includes(id)),
+        ];
+        return newt;
       });
     };
     fetchData();
@@ -43,7 +47,7 @@ const Tree = () => {
       const list = categories.map((category) => {
         return {
           ...category,
-          ratio: (category.treeQty / total) * 100,
+          ratio: (category.count / total) * 100,
           color: colors.shift() || "#A8A8A8",
         };
       });

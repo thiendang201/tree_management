@@ -1,5 +1,5 @@
 import Input from "../../shared/Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ImArrowRight2 } from "react-icons/im";
 import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
 import { buttonColor } from "../../config";
@@ -12,12 +12,14 @@ import {
   MdSave,
 } from "react-icons/md";
 import { CSSTransition } from "react-transition-group";
+import { treeList } from "../../services/treeServices";
+import DefaultImg from "../../assets/images/default.jpg";
 
 const AddPlan = () => {
   const [DSNhanVien, setDSNhanVien] = useState([
-    { label: "Nguyễn Văn A", value: 1 },
-    { label: "Nguyễn Văn B", value: 2 },
-    { label: "Nguyễn Văn C", value: 3 },
+    { label: "Nguyễn Văn A", value: "NV1" },
+    { label: "Nguyễn Văn B", value: "NV2" },
+    { label: "Nguyễn Văn C", value: "NV3" },
   ]);
   const doUuTien = [
     { label: 1, value: 1 },
@@ -27,56 +29,7 @@ const AddPlan = () => {
     { label: 5, value: 5 },
   ];
 
-  const [DSCay, setDSCay] = useState([
-    {
-      id: 1,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 2,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 3,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 4,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 5,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 6,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 7,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-    {
-      id: 8,
-      name: "Cây sao đen",
-      img: "https://caydothi.com.vn/wp-content/uploads/2018/06/cay-sao-den.png",
-      location: "Nguyễn Văn Linh, Hải Châu",
-    },
-  ]);
+  const [DSCay, setDSCay] = useState([]);
   const [keHoach, setKeHoach] = useState({
     tenKeHoach: "",
     diaDiem: "",
@@ -87,6 +40,12 @@ const AddPlan = () => {
     doUuTien: doUuTien[0].value,
     DSCay: [],
     DSCongViec: [],
+    touched: {
+      tenKeHoach: false,
+      diaDiem: false,
+      moTa: false,
+      DSCay: false,
+    },
   });
   const [congViec, setCongViec] = useState({
     tenCongViec: "",
@@ -96,6 +55,25 @@ const AddPlan = () => {
   });
   const [openTreeSelect, setOpenTreeSelect] = useState(false);
 
+  useEffect(() => {
+    const fetchData = async function () {
+      const { data } = await treeList(1);
+      setDSCay((prev) => {
+        const ListId = prev.map(({ id }) => id);
+        const newt = [
+          ...prev,
+          ...data.filter(({ id }) => !ListId.includes(id)),
+        ];
+        return newt;
+      });
+    };
+    fetchData();
+  }, []);
+
+  const onBlur = (name) => {
+    setKeHoach({ ...keHoach, touched: { ...keHoach.touched, [name]: true } });
+  };
+
   const onChange = (setState, type, name) => (data) => {
     if (type === "select") {
       const { value } = data;
@@ -104,7 +82,8 @@ const AddPlan = () => {
     }
 
     if (type === "select-multi") {
-      setState((prev) => ({ ...prev, [name]: value }));
+      const valueList = data.map(({ value }) => value);
+      setState((prev) => ({ ...prev, [name]: valueList }));
       return;
     }
     if (type === "date") {
@@ -259,19 +238,21 @@ const AddPlan = () => {
             <h2 className="font-semibold text-[1.4rem]">Danh sách cây xanh</h2>
             <ul className="min-w-[100%] bg-white max-h-[300px] overflow-y-auto rounded-[0.6rem] py-1">
               {DSCay.filter(({ id }) => keHoach.DSCay.includes(id)).map(
-                ({ id, name, img, location }) => (
+                ({ id, tenCay, hinhAnh, viTri }) => (
                   <li
                     key={id}
                     className="flex justify-between p-1 border-b border-border-color hover:bg-slate-50 transition-all duration-300"
                   >
                     <div className="flex gap-1">
                       <div
-                        style={{ backgroundImage: `url(${img})` }}
+                        style={{
+                          backgroundImage: `url(${hinhAnh || DefaultImg})`,
+                        }}
                         className="rounded-[1rem] h-[5rem] w-[5rem] bg-center bg-no-repeat bg-cover shadow-lg"
                       ></div>
                       <div className="flex flex-col justify-center">
-                        <h3 className="text-[1.2rem] font-semibold">{`#${id} - ${name}`}</h3>
-                        <p className="font-medium">{location}</p>
+                        <h3 className="text-[1.2rem] font-semibold">{`#${id} - ${tenCay}`}</h3>
+                        <p className="font-medium">{viTri}</p>
                       </div>
                     </div>
                     <button className="p-1" onClick={onChangeTreeList(id)}>

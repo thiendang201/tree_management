@@ -2,106 +2,76 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdAddCircle, MdDelete, MdEdit, MdRemoveRedEye } from "react-icons/md";
 import { RiSearchLine } from "react-icons/ri";
+import { format, differenceInDays } from "date-fns";
 import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
 import DoUuTien from "../../components/DoUuTien";
 import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import Input from "../../shared/Input";
+import { useEffect } from "react";
+import { planList } from "../../services/planservices";
 
 const Plan = () => {
   const sapXepList = [
     { label: "Độ ưu tiên giảm dần", value: "ut_desc" },
     { label: "Độ ưu tiên tăng dần", value: "ut_asc" },
-    { label: "Ngày bắt đầu giảm dần", value: "nbd_asc" },
+    { label: "Ngày bắt đầu giảm dần", value: "nbd_desc" },
     { label: "Ngày bắt đầu tăng dần", value: "nbd_asc" },
   ];
-  const [DSKeHoach, setDSKeHoach] = useState([
-    {
-      id: 1,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 2,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 3,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 4,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 5,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 6,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 7,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-    {
-      id: 8,
-      tenKeHoach: "Tỉa cây đón bão",
-      diaDiem: "Phường Hòa thuận Tây",
-      soNgay: 2,
-      soLuongNV: 6,
-      ngayBatDau: "25/04/2022",
-      ngayKetThuc: "27/04/2022",
-      doUuTien: 4,
-    },
-  ]);
+  const [DSKeHoach, setDSKeHoach] = useState([]);
 
-  const [sapXep, setSapXep] = useState(sapXepList[0].value);
+  // const [sapXep, setSapXep] = useState(sapXepList[0].value);
   const onChangeSapXep = ({ value }) => {
-    setSapXep(value);
+    const [prefix, sort] = value.split("_");
+    if (prefix === "ut") {
+      setDSKeHoach((prev) => [
+        ...prev.sort(
+          ({ doUuTien: a, tenKeHoach: c }, { doUuTien: b, tenKeHoach: d }) => {
+            // console.log(c, a);
+            // console.log(d, b);
+            return sort === "desc" ? b - a : a - b;
+          }
+        ),
+      ]);
+    }
+
+    prefix === "nbd" &&
+      setDSKeHoach((prev) => [
+        ...prev.sort(({ ngayBatDau: a }, { ngayBatDau: b }) => {
+          const [d_s, m_s, y_s] = a.split("/");
+          const [d_e, m_e, y_e] = b.split("/");
+          return sort === "desc"
+            ? differenceInDays(new Date(y_e, m_e, d_e), new Date(y_s, m_s, d_s))
+            : differenceInDays(
+                new Date(y_s, m_s, d_s),
+                new Date(y_e, m_e, d_e)
+              );
+        }),
+      ]);
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      let plans = await planList();
+      plans = plans.map(({ ngayBatDau, ngayKetThuc, ...attrs }) => {
+        const [y_s, m_s, d_s] = ngayBatDau.split("-");
+        const [y_e, m_e, d_e] = ngayKetThuc.split("-");
+
+        return {
+          ...attrs,
+          ngayBatDau: format(new Date(y_s, m_s, d_s), "dd/MM/yyyy"),
+          ngayKetThuc: format(new Date(y_e, m_e, d_e), "dd/MM/yyyy"),
+          soNgay: differenceInDays(
+            new Date(y_e, m_e, d_e),
+            new Date(y_s, m_s, d_s)
+          ),
+        };
+      });
+      setDSKeHoach(plans);
+    }
+    fetchData();
+  }, []);
+
   const navigate = useNavigate();
 
   const toAddPlanPage = () => {
@@ -166,9 +136,6 @@ const Plan = () => {
               </th>
               <th className="py-[1.6rem] text-[1.2rem] text-left">Địa điểm</th>
               <th className="py-[1.6rem] text-[1.2rem]">Ngày</th>
-              <th className="py-[1.6rem] w-[10%] text-[1.2rem]">
-                Số lượng nhân viên
-              </th>
               <th className="py-[1.6rem] w-[7%] text-[1.2rem]">Bắt đầu</th>
               <th className="py-[1.6rem] w-[7%] text-[1.2rem]">Kết thúc</th>
               <th className="py-[1.6rem] w-[10%] text-[1.2rem]">Ưu tiên</th>
@@ -182,7 +149,6 @@ const Plan = () => {
                 tenKeHoach,
                 diaDiem,
                 soNgay,
-                soLuongNV,
                 ngayBatDau,
                 ngayKetThuc,
                 doUuTien,
@@ -198,9 +164,6 @@ const Plan = () => {
                   <td className="py-[1.6rem] text-[1.2rem] ">{diaDiem}</td>
                   <td className="text-center py-[1.6rem] text-[1.2rem]">
                     {soNgay}
-                  </td>
-                  <td className="text-center py-[1.6rem] text-[1.2rem]">
-                    {soLuongNV}
                   </td>
                   <td className="text-center py-[1.6rem] text-[1.2rem]">
                     {ngayBatDau}
