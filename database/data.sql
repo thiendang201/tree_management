@@ -21,12 +21,12 @@ INSERT INTO `Quyen` (`id`,`tenQuyen`) VALUES
 ('Q2',N'Quản lý'),
 ('Q3',N'Nhân viên');
 
-INSERT INTO `NhanVien` (`id`,`tenNV`, `hinhAnh`, `CCCD`, `ngaySinh`, `SDT`, `email`, `diaChi`, `gioiTinh`, `trangThai`, `password`, `idQuyen`) VALUES
-('NV1',N'Nguyễn Văn Anh',' ','263742934745','1998/03/04','0905426782','vananh@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q1'),
-('NV2',N'Nguyễn Thị Minh',' ','162537472534','1998/09/04','0237842384','thiminh@gmail.com', N'Đà Nẵng',N'Nữ',1,'a', 'Q2'),
-('NV3',N'Trần Văn Nam',' ','671375127357','1998/06/04','0236462734','vannam@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q3'),
-('NV4',N'Nguyễn Ánh',' ','781232187368','1998/12/04','0263547234','nguyenanh@gmail.com', N'Đà Nẵng',N'Nữ',1,'a', 'Q3'),
-('NV5',N'Võ Văn Kỳ',' ','871236872631','1998/03/04','0123182376','vanky@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q3');
+INSERT INTO `NhanVien` (`id`,`tenNV`, `CCCD`, `ngaySinh`, `SDT`, `email`, `diaChi`, `gioiTinh`, `trangThai`, `password`, `idQuyen`) VALUES
+('NV1',N'Nguyễn Văn Anh','263742934745','1998/03/04','0905426782','vananh@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q1'),
+('NV2',N'Nguyễn Thị Minh','162537472534','1998/09/04','0237842384','thiminh@gmail.com', N'Đà Nẵng',N'Nữ',1,'a', 'Q2'),
+('NV3',N'Trần Văn Nam','671375127357','1998/06/04','0236462734','vannam@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q3'),
+('NV4',N'Nguyễn Ánh','781232187368','1998/12/04','0263547234','nguyenanh@gmail.com', N'Đà Nẵng',N'Nữ',1,'a', 'Q3'),
+('NV5',N'Võ Văn Kỳ','871236872631','1998/03/04','0123182376','vanky@gmail.com', N'Quảng Nam',N'Nam',1,'a', 'Q3');
 
 INSERT INTO `KeHoach` (`id`,`tenKeHoach`, `moTa`, `diaDiem`, `ngayBatDau`, `ngayKetThuc`, `doUuTien`, `idNVPhuTrach`, `trangThai`) VALUES	
 ('KH1',N'Tiả cây đón bão',N'Tiến hành cắt tỉa cây xanh đề phòng bão',N'Phường Hòa Thuận Tây','2022/04/26','2022/04/30',4,'NV1',3),
@@ -182,7 +182,7 @@ DROP PROCEDURE if exists ThongKeCayXanh;
 DELIMITER $$
 CREATE PROCEDURE ThongKeCayXanh (
     IN tinhTrang CHAR(1),
-    IN viTri NVARCHAR(255), 
+    IN viTri VARCHAR(255), 
     IN tuoi INT,
     IN idLC VARCHAR(255)
 )
@@ -207,7 +207,7 @@ BEGIN
         SELECT 
             t.id as IdCay,
 			tenCay, viTri, ngayTrong, trangThai, tenLoaiCay,
-            IF(p.ngayHet is null, 'true', 'false') as biBenh
+            IF(p.ngayHet is null and count(p.id) > 0, 'true', 'false') as biBenh
         FROM
             cayXanh t
 		JOIN
@@ -218,7 +218,8 @@ BEGIN
             viTri like CONCAT('%', viTri, '%')
             AND timestampdiff(YEAR, ngayTrong, date(now())) = tuoi
             AND idLoaiCay = idLC
-            AND t.id not in (select idCay from tinhtrangsaubenh p where p.ngayHet is null);
+            AND t.id not in (select idCay from tinhtrangsaubenh p where p.ngayHet is null)
+		group by t.id;
     END IF;
 END$$
 DELIMITER ;
