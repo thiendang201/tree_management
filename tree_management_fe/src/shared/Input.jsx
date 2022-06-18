@@ -47,7 +47,8 @@ const Input = ({
           }`}
           isMulti={isMulti}
           classNamePrefix={classNamePrefix || "react-select"}
-          defaultValue={startValue}
+          // defaultValue={startValue}
+          value={startValue}
           onChange={onChange}
           options={options}
           placeholder={placeHolder}

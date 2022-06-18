@@ -15,13 +15,11 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { treeList } from "../../services/treeServices";
 import DefaultImg from "../../assets/images/default.jpg";
+import { staffList } from "../../services/staffServices";
+import { addPlan } from "../../services/planservices";
 
 const AddPlan = () => {
-  const [DSNhanVien, setDSNhanVien] = useState([
-    { label: "Nguyễn Văn A", value: "NV1" },
-    { label: "Nguyễn Văn B", value: "NV2" },
-    { label: "Nguyễn Văn C", value: "NV3" },
-  ]);
+  const [DSNhanVien, setDSNhanVien] = useState([]);
   const doUuTien = [
     { label: 1, value: 1 },
     { label: 2, value: 2 },
@@ -45,17 +43,17 @@ const AddPlan = () => {
       tenKeHoach: false,
       diaDiem: false,
       moTa: false,
-      DSCay: false,
+      // DSCay: false,
       idNVPhuTrach: false,
     },
   });
   const [congViec, setCongViec] = useState({
-    tenCongViec: "",
+    tenCV: "",
     ngayBatDau: new Date(),
     ngayKetThuc: new Date(),
     DSNhanVien: [],
     touched: {
-      tenCongViec: false,
+      tenCV: false,
       DSNhanVien: false,
       ngayBatDau: false,
       ngayKetThuc: false,
@@ -65,15 +63,10 @@ const AddPlan = () => {
 
   useEffect(() => {
     const fetchData = async function () {
-      const { data } = await treeList(1);
-      setDSCay((prev) => {
-        const ListId = prev.map(({ id }) => id);
-        const newt = [
-          ...prev,
-          ...data.filter(({ id }) => !ListId.includes(id)),
-        ];
-        return newt;
-      });
+      const dsCay = await treeList(1, true);
+      const dsNV = await staffList();
+      setDSCay(dsCay);
+      setDSNhanVien(dsNV.map(({ id, tenNV }) => ({ label: tenNV, value: id })));
     };
     fetchData();
   }, []);
@@ -92,8 +85,10 @@ const AddPlan = () => {
     }
 
     if (type === "select-multi") {
-      const valueList = data.map(({ value }) => value);
-      setState((prev) => ({ ...prev, [name]: valueList }));
+      // const valueList = data.map(({ value }) => value);
+      // setState((prev) => ({ ...prev, [name]: valueList }));
+      setState((prev) => ({ ...prev, [name]: data }));
+      console.log(data);
       return;
     }
     if (type === "date") {
@@ -138,12 +133,12 @@ const AddPlan = () => {
 
     setKeHoach(newKH);
     setCongViec({
-      tenCongViec: "",
+      tenCV: "",
       ngayBatDau: new Date(),
       ngayKetThuc: new Date(),
       DSNhanVien: [],
       touched: {
-        tenCongViec: false,
+        tenCV: false,
         DSNhanVien: false,
         ngayBatDau: false,
         ngayKetThuc: false,
@@ -151,11 +146,23 @@ const AddPlan = () => {
     });
   };
 
+  const ThemKeHoach = async () => {
+    const { touched, ngayBatDau, ngayKetThuc, ...attrs } = keHoach;
+    const keHoachMoi = {
+      ...attrs,
+      ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
+      ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
+    };
+    console.log(JSON.stringify(keHoachMoi));
+    const res = await addPlan(keHoachMoi);
+    console.log(res);
+  };
+
   const validate = () => {
     const {
       tenKeHoach,
       moTa,
-      DSCay,
+      // DSCay,
       DSCongViec,
       diaDiem,
       ngayBatDau,
@@ -164,7 +171,7 @@ const AddPlan = () => {
     } = keHoach;
 
     const {
-      tenCongViec: tcv,
+      tenCV: tcv,
       DSNhanVien: dsnv,
       ngayBatDau: tcv_bd,
       ngayKetThuc: tcv_kt,
@@ -173,7 +180,7 @@ const AddPlan = () => {
     const {
       tenKeHoach: t,
       moTa: m,
-      DSCay: dsc,
+      // DSCay: dsc,
       diaDiem: d,
       idNVPhuTrach: tnv,
     } = keHoach.touched;
@@ -182,7 +189,7 @@ const AddPlan = () => {
       etenKeHoach: t && !tenKeHoach ? "Hãy nhập tên kế hoạch" : "",
       emoTa: m && !moTa ? "Hãy nhập mô tả" : "",
       ediaDiem: d && !diaDiem ? "Hãy nhập địa điểm" : "",
-      eDSCay: dsc && !DSCay.length ? "Hãy thêm ít nhất 1 cây" : "",
+      // eDSCay: dsc && !DSCay.length ? "Hãy thêm ít nhất 1 cây" : "",
       eidNVPhuTrach: tnv && !idNVPhuTrach ? "Hãy chọn nhân viên phụ trách" : "",
       eDSCongViec:
         tcv || dsnv || tcv_bd || (tcv_kt && DSCongViec.length)
@@ -201,19 +208,14 @@ const AddPlan = () => {
 
   const validateCongViec = () => {
     const {
-      tenCongViec,
+      tenCV,
       DSNhanVien,
       ngayBatDau: cv_bd,
       ngayKetThuc: cv_kt,
     } = congViec;
-    const {
-      tenCongViec: tcv,
-      DSNhanVien: dsnv,
-      ngayBatDau: tcv_bd,
-      ngayKetThuc: tcv_kt,
-    } = congViec.touched;
+    const { tenCV: tcv, DSNhanVien: dsnv } = congViec.touched;
     return {
-      etenCongViec: tcv && !tenCongViec ? "Hãy nhập tên công việc" : "",
+      etenCV: tcv && !tenCV ? "Hãy nhập tên công việc" : "",
       eDSNhanVien:
         dsnv && !DSNhanVien.length ? "Hãy chọn nhân viên thực hiện" : "",
       eCVBD:
@@ -237,9 +239,9 @@ const AddPlan = () => {
     eKHNKT,
     eKHNBD,
   } = validate();
-  const { etenCongViec, eDSNhanVien, eCVBD, eCVKT } = validateCongViec();
+  const { etenCV, eDSNhanVien, eCVBD, eCVKT } = validateCongViec();
 
-  // console.log(keHoach);
+  console.log(keHoach.DSCongViec);
 
   return (
     <div className="p-2">
@@ -255,11 +257,20 @@ const AddPlan = () => {
           <h2 className="text-[1.4rem] font-semibold">Thêm kế hoạch</h2>
         </div>
         <div>
-          <Button
-            text="Lưu"
-            // onClick={ThemBenh}
-            icon={<MdSave size={"2rem"} fill="#fff" />}
-          />
+          {
+            <Button
+              type={
+                Object.values(keHoach.touched).some((touched) => !touched) ||
+                Object.values(validate()).some((err) => err) ||
+                !keHoach.DSCongViec.length
+                  ? "disable"
+                  : "solid"
+              }
+              text="Lưu"
+              onClick={ThemKeHoach}
+              icon={<MdSave size={"2rem"} fill="#fff" />}
+            />
+          }
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 border border-border-color p-2 border-y-0">
@@ -312,6 +323,7 @@ const AddPlan = () => {
             options={doUuTien}
             placeHolder="Độ ưu tiên"
             label="Độ ưu tiên"
+            startValue={doUuTien[0]}
             // error={sauBenhErrors.mucDo}
           />
           <Input
@@ -340,7 +352,7 @@ const AddPlan = () => {
               onClick={() => {
                 setOpenTreeSelect(!openTreeSelect);
               }}
-              onBlur={onBlur("DSCay", setKeHoach)}
+              // onBlur={onBlur("DSCay", setKeHoach)}
               className={`bg-[#FAFBFD] mt-[0.6rem] rounded-[0.4rem] px-[1.4rem] py-[1.1rem] text-[1.2rem] font-medium outline-none relative text-left text-[#9FABC6] flex justify-between items-center w-[100%] }`}
             >
               Chọn cây xanh <MdKeyboardArrowDown size={24} fill={buttonColor} />
@@ -380,15 +392,7 @@ const AddPlan = () => {
             <h2 className="font-semibold text-[1.4rem] inline-block">
               Danh sách cây xanh
             </h2>{" "}
-            <ul className="min-w-[100%] bg-white max-h-[300px] overflow-y-auto rounded-[0.6rem] py-1 border-b border-x-border-color">
-              {keHoach.DSCay.length === 0 && !keHoach.touched.DSCay === 0 && (
-                <p className="text-center font-medium text-[1.2rem]">Trống</p>
-              )}
-              {eDSCay && (
-                <p className="ml-[0.6rem] text-danger text-center text-[1.2rem]">
-                  {eDSCay}
-                </p>
-              )}
+            <ul className="min-w-[100%] bg-white max-h-[300px] overflow-y-auto rounded-[0.6rem] pt-1">
               {DSCay.filter(({ id }) => keHoach.DSCay.includes(id)).map(
                 ({ id, tenCay, hinhAnh, viTri }) => (
                   <li
@@ -414,6 +418,16 @@ const AddPlan = () => {
                 )
               )}
             </ul>
+            {keHoach.DSCay.length === 0 && !keHoach.touched.DSCay && (
+              <p className="text-center font-medium text-[1.2rem] border-b border-border-color py-1">
+                Trống
+              </p>
+            )}
+            {/* {eDSCay && (
+              <p className="ml-[0.6rem] text-danger text-center text-[1.2rem]  border-b border-border-color py-1">
+                {eDSCay}
+              </p>
+            )} */}
           </div>
         </div>
       </div>
@@ -421,13 +435,13 @@ const AddPlan = () => {
         <div className="border-t border-border-color grid grid-cols-[390px_1fr] gap-2 pt-3">
           <div className="flex flex-col gap-[1.4rem]">
             <Input
-              name="tenCongViec"
+              name="tenCV"
               placeHolder="Điền tên công việc"
               label=" Tên công việc"
-              onChange={onChange(setCongViec, "text", "tenCongViec")}
-              startValue={congViec.tenCongViec}
-              onBlur={onBlur("tenCongViec", setCongViec)}
-              error={etenCongViec}
+              onChange={onChange(setCongViec, "text", "tenCV")}
+              startValue={congViec.tenCV}
+              onBlur={onBlur("tenCV", setCongViec)}
+              error={etenCV}
             />
             <Input
               type="date"
@@ -461,14 +475,15 @@ const AddPlan = () => {
               label="Nhân viên thực hiện"
               onBlur={onBlur("DSNhanVien", setCongViec)}
               error={eDSNhanVien}
+              startValue={congViec.DSNhanVien}
             />
             <div className="flex justify-end">
               {
                 <Button
                   type={
-                    Object.values(congViec.touched).some(
-                      (touched) => !touched
-                    ) || Object.values(validateCongViec()).some((err) => err)
+                    !congViec.touched.tenCV ||
+                    !congViec.touched.DSNhanVien ||
+                    Object.values(validateCongViec()).some((err) => err)
                       ? "disable"
                       : "solid"
                   }
@@ -498,10 +513,13 @@ const AddPlan = () => {
               <tbody>
                 {keHoach.DSCongViec.map(
                   (
-                    { tenCongViec, DSNhanVien, ngayBatDau, ngayKetThuc },
+                    { tenCV, DSNhanVien: dsnv, ngayBatDau, ngayKetThuc },
                     index
                   ) => {
-                    // const NV = DSNhanVien.map(())
+                    // const DSNV = DSNhanVien.map(({ label, value }) => {
+                    //   return dsnv.includes(value) ? label : null;
+                    // }).filter((item) => item);
+                    const DSNV = DSNhanVien.map(({ label, value }) => label);
                     const [y_s, m_s, d_s] = ngayBatDau.split("-");
                     const [y_e, m_e, d_e] = ngayKetThuc.split("-");
 
@@ -510,22 +528,17 @@ const AddPlan = () => {
                         className="font-semibold border-b border-border-color"
                         key={index}
                       >
-                        <td className="py-[1.6rem] text-[1.2rem]">
-                          {tenCongViec}
-                        </td>
+                        <td className="py-[1.6rem] text-[1.2rem]">{tenCV}</td>
                         <td className="py-[1.6rem] text-[1.2rem] ">
-                          {DSNhanVien}
+                          {DSNV.join(", ")}
                         </td>
                         <td className="text-center py-[1.6rem] text-[1.2rem]">
-                          {format(new Date(y_s, m_s, d_s), "dd/MM/yyyy")}
+                          {`${d_s}/${m_s}/${y_s}`}
                         </td>
                         <td className="text-center py-[1.6rem] text-[1.2rem]">
-                          {format(new Date(y_e, m_e, d_e), "dd/MM/yyyy")}
+                          {`${d_e}/${m_e}/${y_e}`}
                         </td>
                         <td className="text-center py-[1.6rem] text-[1.2rem]">
-                          <button className="ml-1">
-                            <MdEdit size={18} />
-                          </button>
                           <button className="ml-1">
                             <MdDelete size={18} />
                           </button>
@@ -542,7 +555,7 @@ const AddPlan = () => {
                   Trống
                 </p>
               )}
-            {eDSCongViec && (
+            {eDSCongViec && keHoach.DSCongViec.length === 0 && (
               <p className="ml-[0.6rem] text-danger text-center text-[1.2rem] p-2 border-b border-border-colorp-2 border-b border-border-color">
                 {eDSCongViec}
               </p>
