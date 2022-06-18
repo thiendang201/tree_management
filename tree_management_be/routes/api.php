@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\StatisticController;
 use App\Http\Controllers\Api\Admin\TreeController;
 use App\Http\Controllers\Api\Admin\PlanController;
@@ -41,7 +42,9 @@ Route::prefix("admin")->group(function (){
         Route::put("update", [PlanController::class, 'update']);
         Route::post("search", [PlanController::class, 'search']);
         Route::delete("delete/{id}", [PlanController::class, 'delete']);
-
+    });
+    Route::prefix("staff")->group(function (){
+        Route::get("list",[StaffController::class, 'getAllByRole']);
     });
     Route::prefix("statistic")->group(function(){
         Route::post("tree", [StatisticController::class, 'statisticTree']);

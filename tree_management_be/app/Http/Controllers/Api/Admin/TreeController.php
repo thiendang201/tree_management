@@ -22,9 +22,9 @@ class TreeController extends Controller
 //        return $trees;
 //    }
 
-    public function index()
+    public function index(Request $request)
     {
-        $trees = $this->treeService->getAll();
+        $trees = $this->treeService->getAll($request);
         return $trees;
     }
 
