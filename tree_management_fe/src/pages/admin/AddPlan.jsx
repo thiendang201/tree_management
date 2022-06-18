@@ -14,6 +14,7 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { treeList } from "../../services/treeServices";
 import DefaultImg from "../../assets/images/default.jpg";
+import { differenceInDays } from "date-fns";
 
 const AddPlan = () => {
   const [DSNhanVien, setDSNhanVien] = useState([
@@ -34,7 +35,7 @@ const AddPlan = () => {
     tenKeHoach: "",
     diaDiem: "",
     moTa: "",
-    idNVPhuTrach: 1,
+    idNVPhuTrach: null,
     ngayBatDau: new Date(),
     ngayKetThuc: new Date(),
     doUuTien: doUuTien[0].value,
@@ -45,6 +46,7 @@ const AddPlan = () => {
       diaDiem: false,
       moTa: false,
       DSCay: false,
+      idNVPhuTrach: false,
     },
   });
   const [congViec, setCongViec] = useState({
@@ -52,6 +54,12 @@ const AddPlan = () => {
     ngayBatDau: new Date(),
     ngayKetThuc: new Date(),
     DSNhanVien: [],
+    touched: {
+      tenCongViec: false,
+      DSNhanVien: false,
+      ngayBatDau: false,
+      ngayKetThuc: false,
+    },
   });
   const [openTreeSelect, setOpenTreeSelect] = useState(false);
 
@@ -70,8 +78,10 @@ const AddPlan = () => {
     fetchData();
   }, []);
 
-  const onBlur = (name) => () => {
-    setKeHoach({ ...keHoach, touched: { ...keHoach.touched, [name]: true } });
+  const onBlur = (name, setSate) => () => {
+    setSate((prev) => {
+      return { ...prev, touched: { ...prev.touched, [name]: true } };
+    });
   };
 
   const onChange = (setState, type, name) => (data) => {
@@ -112,26 +122,83 @@ const AddPlan = () => {
     console.log(isOver);
   };
 
-  const validateKeHoach = () => {
-    const { tenKeHoach, moTa, DSCay, DSCongViec, diaDiem } = keHoach;
+  const validate = () => {
+    const {
+      tenKeHoach,
+      moTa,
+      DSCay,
+      DSCongViec,
+      diaDiem,
+      ngayBatDau,
+      ngayKetThuc,
+      idNVPhuTrach,
+    } = keHoach;
+    const {
+      tenCongViec,
+      DSNhanVien,
+      ngayBatDau: cv_bd,
+      ngayKetThuc: cv_kt,
+    } = congViec;
     const {
       tenKeHoach: t,
       moTa: m,
       DSCay: dsc,
-      DSCongViec: dscv,
       diaDiem: d,
+      idNVPhuTrach: tnv,
     } = keHoach.touched;
+    const {
+      tenCongViec: tcv,
+      DSNhanVien: dsnv,
+      ngayBatDau: tcv_bd,
+      ngayKetThuc: tcv_kt,
+    } = congViec.touched;
+
     return {
       etenKeHoach: t && !tenKeHoach ? "Hãy nhập tên kế hoạch" : "",
       emoTa: m && !moTa ? "Hãy nhập mô tả" : "",
       ediaDiem: d && !diaDiem ? "Hãy nhập địa điểm" : "",
       eDSCay: dsc && !DSCay.length ? "Hãy thêm ít nhất 1 cây" : "",
-      eDSCongViec: dscv && !DSCongViec ? "Hãy thêm công việc" : "",
+      eidNVPhuTrach: tnv && !idNVPhuTrach ? "Hãy chọn nhân viên phụ trách" : "",
+      eDSCongViec:
+        tcv || dsnv || tcv_bd || (tcv_kt && DSCongViec.length)
+          ? "Hãy thêm công việc"
+          : "",
+      eKHNBD:
+        differenceInDays(ngayKetThuc, ngayBatDau) < 0
+          ? "Ngày bắt đầu phải nhỏ hơn ngày kết thúc"
+          : "",
+      eKHNKT:
+        differenceInDays(ngayKetThuc, ngayBatDau) < 0
+          ? "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+          : "",
+      etenCongViec: tcv && !tenCongViec ? "Hãy nhập tên công việc" : "",
+      eDSNhanVien:
+        dsnv && !DSNhanVien.length ? "Hãy chọn nhân viên thực hiện" : "",
+      eCVBD:
+        differenceInDays(cv_kt, cv_bd) < 0
+          ? "Ngày bắt đầu phải nhỏ hơn ngày kết thúc"
+          : "",
+      eCVKT:
+        differenceInDays(cv_kt, cv_bd) < 0
+          ? "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+          : "",
     };
   };
 
-  const { etenKeHoach, emoTa, eDSCay, eDSCongViec, ediaDiem } =
-    validateKeHoach();
+  const {
+    etenKeHoach,
+    emoTa,
+    eDSCay,
+    eidNVPhuTrach,
+    eDSCongViec,
+    ediaDiem,
+    eKHNKT,
+    eKHNBD,
+    etenCongViec,
+    eDSNhanVien,
+    eCVBD,
+    eCVKT,
+  } = validate();
 
   console.log(keHoach.touched);
 
@@ -164,7 +231,7 @@ const AddPlan = () => {
             label=" Tên kế hoạch"
             onChange={onChange(setKeHoach, "text", "tenKeHoach")}
             startValue={keHoach.tenKeHoach}
-            onBlur={onBlur("tenKeHoach")}
+            onBlur={onBlur("tenKeHoach", setKeHoach)}
             error={etenKeHoach}
           />
           <Input
@@ -175,7 +242,7 @@ const AddPlan = () => {
             onChange={onChange(setKeHoach, "text", "moTa")}
             startValue={keHoach.moTa}
             className="resize-y min-h-[13.2rem]"
-            onBlur={onBlur("moTa")}
+            onBlur={onBlur("moTa", setKeHoach)}
             error={emoTa}
           />
           <Input
@@ -185,7 +252,8 @@ const AddPlan = () => {
             options={DSNhanVien}
             placeHolder="Chọn nhân viên phụ trách"
             label="Nhân viên phụ trách"
-            // error={sauBenhErrors.mucDo}
+            onBlur={onBlur("idNVPhuTrach", setKeHoach)}
+            error={eidNVPhuTrach}
           />
         </div>
         <div className="flex flex-col gap-[1.4rem]">
@@ -195,7 +263,7 @@ const AddPlan = () => {
             label="Địa điểm"
             onChange={onChange(setKeHoach, "text", "diaDiem")}
             startValue={keHoach.diaDiem}
-            onBlur={onBlur("diaDiem")}
+            onBlur={onBlur("diaDiem", setKeHoach)}
             error={ediaDiem}
           />
           <Input
@@ -213,6 +281,8 @@ const AddPlan = () => {
             startValue={keHoach.ngayBatDau}
             onChange={onChange(setKeHoach, "date", "ngayBatDau")}
             className="w-[100%]"
+            error={eKHNBD}
+            minDate={new Date()}
           />
           <Input
             type="date"
@@ -220,6 +290,8 @@ const AddPlan = () => {
             startValue={keHoach.ngayKetThuc}
             onChange={onChange(setKeHoach, "date", "ngayKetThuc")}
             className="w-[100%]"
+            minDate={new Date()}
+            error={eKHNKT}
           />
         </div>
         <div className="flex flex-col gap-[1.4rem]">
@@ -229,7 +301,7 @@ const AddPlan = () => {
               onClick={() => {
                 setOpenTreeSelect(!openTreeSelect);
               }}
-              onBlur={onBlur("DSCay")}
+              onBlur={onBlur("DSCay", setKeHoach)}
               className={`bg-[#FAFBFD] mt-[0.6rem] rounded-[0.4rem] px-[1.4rem] py-[1.1rem] text-[1.2rem] font-medium outline-none relative text-left text-[#9FABC6] flex justify-between items-center w-[100%] }`}
             >
               Chọn cây xanh <MdKeyboardArrowDown size={24} fill={buttonColor} />
@@ -315,6 +387,8 @@ const AddPlan = () => {
               label=" Tên công việc"
               onChange={onChange(setCongViec, "text", "tenCongViec")}
               startValue={congViec.tenCongViec}
+              onBlur={onBlur("tenCongViec", setCongViec)}
+              error={etenCongViec}
             />
             <Input
               type="date"
@@ -322,6 +396,10 @@ const AddPlan = () => {
               startValue={congViec.ngayBatDau}
               onChange={onChange(setCongViec, "date", "ngayBatDau")}
               className="w-[100%]"
+              onBlur={onBlur("ngayBatDau", setCongViec)}
+              error={eCVBD}
+              minDate={keHoach.ngayBatDau}
+              maxDate={keHoach.ngayKetThuc}
             />
             <Input
               type="date"
@@ -329,6 +407,10 @@ const AddPlan = () => {
               startValue={congViec.ngayKetThuc}
               onChange={onChange(setCongViec, "date", "ngayKetThuc")}
               className="w-[100%]"
+              onBlur={onBlur("ngayKetThuc", setCongViec)}
+              error={eCVKT}
+              minDate={keHoach.ngayBatDau}
+              maxDate={keHoach.ngayKetThuc}
             />
             <Input
               type="select"
@@ -336,9 +418,10 @@ const AddPlan = () => {
               onChange={onChange(setCongViec, "select-multi", "DSNhanVien")}
               options={DSNhanVien}
               isMulti
-              placeHolder="Chọn nhân viên phụ trách"
-              label="Nhân viên phụ trách"
-              // error={sauBenhErrors.mucDo}
+              placeHolder="Chọn nhân viên thực hiện"
+              label="Nhân viên thực hiện"
+              onBlur={onBlur("DSNhanVien", setCongViec)}
+              error={eDSNhanVien}
             />
             <div className="flex justify-end">
               <Button
@@ -399,9 +482,15 @@ const AddPlan = () => {
                 )}
               </tbody>
             </table>
-            {keHoach.DSCongViec.length === 0 && (
-              <p className="text-center font-medium text-[1.2rem] p-2 border-b border-border-color">
-                Trống
+            {Object.values(congViec.touched).every((touched) => !touched) &&
+              keHoach.DSCongViec.length === 0 && (
+                <p className="text-center font-medium text-[1.2rem] p-2 border-b border-border-color">
+                  Trống
+                </p>
+              )}
+            {eDSCongViec && (
+              <p className="ml-[0.6rem] text-danger text-center text-[1.2rem] p-2 border-b border-border-colorp-2 border-b border-border-color">
+                {eDSCongViec}
               </p>
             )}
           </div>

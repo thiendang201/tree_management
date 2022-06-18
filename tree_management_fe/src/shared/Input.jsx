@@ -32,6 +32,7 @@ const Input = ({
   error,
   classNamePrefix,
   maxDate,
+  minDate,
   isMulti,
 }) => {
   if (type === "select")
@@ -41,12 +42,12 @@ const Input = ({
           {label}
         </label>
         <Select
-          className={`mt-[0.6rem] text-[1.2rem] font-medium ${className} ${
+          className={`mt-[0.6rem] text-[1.2rem] rounded-[0.4rem] font-medium ${className} ${
             error && "border border-danger"
           }`}
           isMulti={isMulti}
           classNamePrefix={classNamePrefix || "react-select"}
-          defaultValue={options[0]}
+          defaultValue={startValue}
           onChange={onChange}
           options={options}
           placeholder={placeHolder}
@@ -61,8 +62,11 @@ const Input = ({
   if (type === "date") {
     const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
       <button
-        className={`bg-[#FAFBFD] rounded-[0.4rem] p-[1.4rem] text-[1.2rem] font-medium outline-none relative text-left text-text-color ${className}`}
+        className={`bg-[#FAFBFD] rounded-[0.4rem] p-[1.4rem] text-[1.2rem] font-medium outline-none relative text-left text-text-color ${className}  ${
+          error && "border border-danger"
+        }`}
         onClick={onClick}
+        onBlur={onBlur}
         ref={ref}
       >
         {value || placeHolder}
@@ -82,11 +86,13 @@ const Input = ({
           selected={startValue}
           dateFormat="dd/MM/yyyy"
           maxDate={maxDate}
+          minDate={minDate}
           onChange={onChange}
           locale={vi}
           customInput={<CustomDateInput />}
           calendarClassName="shadow-md"
         />
+        {error && <p className="text-danger text-[1.2rem]">{error}</p>}
       </div>
     );
   }
