@@ -2,6 +2,9 @@
 
 namespace App\Http\Services\Tree;
 
+use App\Http\Services\PestImage\PestImageService;
+use App\Http\Services\PestStatus\PestStatusService;
+use App\Http\Services\TreeImage\TreeImageService;
 use App\Models\CayXanh;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Helper;
@@ -15,21 +18,47 @@ class TreeService
     protected $limit = 8;
     protected $fields = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
     protected $field_search = array('CayXanh.*','LoaiCay.tenLoaiCay as tenLoaiCay');
+    protected $treeImageService;
+    protected $pestStatusService;
 
-    public function getAll(){
+    public function __construct(TreeImageService $treeImageService, PestStatusService $pestStatusService)
+    {
+        $this->treeImageService=$treeImageService;
+        $this->pestStatusService=$pestStatusService;
+    }
+
+    public function getAll($request){
+        $all=$request->input('all');
 //        return CayXanh::all();
-        return DB::table('CayXanh')
+        $query = DB::table('CayXanh')
             ->leftJoin('AnhCay', 'AnhCay.idCay', 'CayXanh.id')
             ->where('CayXanh.trangThai', '=', '1')
             ->orderBy('CayXanh.created_at')
             ->orderBy('AnhCay.created_at')
-            ->groupBy('CayXanh.id')
-            ->paginate($this->limit, $this->fields);
+            ->groupBy('CayXanh.id');
+        if ($all==0)
+        {
+            $result = $query->paginate($this->limit, $this->fields);
+        }
+        else
+        {
+            $result = $query->get($this->fields);
+        }
+
+        return $result;
     }
 
-//    public function getById($id){
-//        return CayXanh::find($id);
-//    }
+    public function getById($id){
+//        $tree = CayXanh::find($id);
+        $tree = DB::table('CayXanh')
+            ->where('CayXanh.id', '=', $id)->get();
+        foreach ($tree as $item)
+        {
+            $item->images=$this->treeImageService->getAllByTreeId($id);
+            $item->pests=$this->pestStatusService->getAllByTreeId($id);
+        }
+        return $tree;
+    }
 
     public function create($request){
         $tree = new CayXanh;

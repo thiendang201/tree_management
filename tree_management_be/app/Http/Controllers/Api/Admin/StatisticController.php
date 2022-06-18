@@ -30,7 +30,7 @@ class StatisticController extends Controller
     }
     public function getStaffByPlan(Request $request)
     {
-        $result = $this->statisticService->getStaffByPlanId($request);
+        $result = $this->statisticService->getStaffByPlan($request);
         return $result;
     }
 }
