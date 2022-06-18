@@ -70,7 +70,7 @@ const AddPlan = () => {
     fetchData();
   }, []);
 
-  const onBlur = (name) => {
+  const onBlur = (name) => () => {
     setKeHoach({ ...keHoach, touched: { ...keHoach.touched, [name]: true } });
   };
 
@@ -112,7 +112,28 @@ const AddPlan = () => {
     console.log(isOver);
   };
 
-  console.log(keHoach);
+  const validateKeHoach = () => {
+    const { tenKeHoach, moTa, DSCay, DSCongViec, diaDiem } = keHoach;
+    const {
+      tenKeHoach: t,
+      moTa: m,
+      DSCay: dsc,
+      DSCongViec: dscv,
+      diaDiem: d,
+    } = keHoach.touched;
+    return {
+      etenKeHoach: t && !tenKeHoach ? "Hãy nhập tên kế hoạch" : "",
+      emoTa: m && !moTa ? "Hãy nhập mô tả" : "",
+      ediaDiem: d && !diaDiem ? "Hãy nhập địa điểm" : "",
+      eDSCay: dsc && !DSCay.length ? "Hãy thêm ít nhất 1 cây" : "",
+      eDSCongViec: dscv && !DSCongViec ? "Hãy thêm công việc" : "",
+    };
+  };
+
+  const { etenKeHoach, emoTa, eDSCay, eDSCongViec, ediaDiem } =
+    validateKeHoach();
+
+  console.log(keHoach.touched);
 
   return (
     <div className="p-2">
@@ -143,6 +164,8 @@ const AddPlan = () => {
             label=" Tên kế hoạch"
             onChange={onChange(setKeHoach, "text", "tenKeHoach")}
             startValue={keHoach.tenKeHoach}
+            onBlur={onBlur("tenKeHoach")}
+            error={etenKeHoach}
           />
           <Input
             type="textarea"
@@ -152,6 +175,8 @@ const AddPlan = () => {
             onChange={onChange(setKeHoach, "text", "moTa")}
             startValue={keHoach.moTa}
             className="resize-y min-h-[13.2rem]"
+            onBlur={onBlur("moTa")}
+            error={emoTa}
           />
           <Input
             type="select"
@@ -170,6 +195,17 @@ const AddPlan = () => {
             label="Địa điểm"
             onChange={onChange(setKeHoach, "text", "diaDiem")}
             startValue={keHoach.diaDiem}
+            onBlur={onBlur("diaDiem")}
+            error={ediaDiem}
+          />
+          <Input
+            type="select"
+            name="doUuTien"
+            onChange={onChange(setKeHoach, "select", "doUuTien")}
+            options={doUuTien}
+            placeHolder="Độ ưu tiên"
+            label="Độ ưu tiên"
+            // error={sauBenhErrors.mucDo}
           />
           <Input
             type="date"
@@ -185,15 +221,6 @@ const AddPlan = () => {
             onChange={onChange(setKeHoach, "date", "ngayKetThuc")}
             className="w-[100%]"
           />
-          <Input
-            type="select"
-            name="doUuTien"
-            onChange={onChange(setKeHoach, "select", "doUuTien")}
-            options={doUuTien}
-            placeHolder="Độ ưu tiên"
-            label="Độ ưu tiên"
-            // error={sauBenhErrors.mucDo}
-          />
         </div>
         <div className="flex flex-col gap-[1.4rem]">
           <div className="relative">
@@ -202,10 +229,12 @@ const AddPlan = () => {
               onClick={() => {
                 setOpenTreeSelect(!openTreeSelect);
               }}
-              className="bg-[#FAFBFD] mt-[0.6rem] rounded-[0.4rem] px-[1.4rem] py-[1.1rem] text-[1.2rem] font-medium outline-none relative text-left text-[#9FABC6] flex justify-between items-center w-[100%]"
+              onBlur={onBlur("DSCay")}
+              className={`bg-[#FAFBFD] mt-[0.6rem] rounded-[0.4rem] px-[1.4rem] py-[1.1rem] text-[1.2rem] font-medium outline-none relative text-left text-[#9FABC6] flex justify-between items-center w-[100%] }`}
             >
               Chọn cây xanh <MdKeyboardArrowDown size={24} fill={buttonColor} />
             </button>
+
             <CSSTransition
               in={openTreeSelect}
               timeout={300}
@@ -214,19 +243,21 @@ const AddPlan = () => {
             >
               <ul className="absolute min-w-[100%] top-[120%] left-[50%] translate-x-[-50%] bg-white shadow-lg max-h-[300px] overflow-y-auto rounded-[0.6rem] py-1">
                 {DSCay.filter(({ id }) => !keHoach.DSCay.includes(id)).map(
-                  ({ id, name, img, location }) => (
+                  ({ id, tenCay, hinhAnh, viTri }) => (
                     <li
                       key={id}
                       className="flex gap-1 p-1 border-b border-border-color hover:bg-slate-50 transition-all duration-300"
                       onClick={onChangeTreeList(id)}
                     >
                       <div
-                        style={{ backgroundImage: `url(${img})` }}
+                        style={{
+                          backgroundImage: `url(${hinhAnh || DefaultImg})`,
+                        }}
                         className="rounded-[1rem] h-[5rem] w-[5rem] bg-center bg-no-repeat bg-cover shadow-lg"
                       ></div>
                       <div className="flex flex-col justify-center">
-                        <h3 className="text-[1.2rem] font-semibold">{`#${id} - ${name}`}</h3>
-                        <p className="font-medium">{location}</p>
+                        <h3 className="text-[1.2rem] font-semibold">{`${id} - ${tenCay}`}</h3>
+                        <p className="font-medium">{viTri}</p>
                       </div>
                     </li>
                   )
@@ -235,8 +266,18 @@ const AddPlan = () => {
             </CSSTransition>
           </div>
           <div>
-            <h2 className="font-semibold text-[1.4rem]">Danh sách cây xanh</h2>
-            <ul className="min-w-[100%] bg-white max-h-[300px] overflow-y-auto rounded-[0.6rem] py-1">
+            <h2 className="font-semibold text-[1.4rem] inline-block">
+              Danh sách cây xanh
+            </h2>{" "}
+            <ul className="min-w-[100%] bg-white max-h-[300px] overflow-y-auto rounded-[0.6rem] py-1 border-b border-x-border-color">
+              {keHoach.DSCay.length === 0 && !keHoach.touched.DSCay === 0 && (
+                <p className="text-center font-medium text-[1.2rem]">Trống</p>
+              )}
+              {eDSCay && (
+                <p className="ml-[0.6rem] text-danger text-center text-[1.2rem]">
+                  {eDSCay}
+                </p>
+              )}
               {DSCay.filter(({ id }) => keHoach.DSCay.includes(id)).map(
                 ({ id, tenCay, hinhAnh, viTri }) => (
                   <li
@@ -251,7 +292,7 @@ const AddPlan = () => {
                         className="rounded-[1rem] h-[5rem] w-[5rem] bg-center bg-no-repeat bg-cover shadow-lg"
                       ></div>
                       <div className="flex flex-col justify-center">
-                        <h3 className="text-[1.2rem] font-semibold">{`#${id} - ${tenCay}`}</h3>
+                        <h3 className="text-[1.2rem] font-semibold">{`${id} - ${tenCay}`}</h3>
                         <p className="font-medium">{viTri}</p>
                       </div>
                     </div>
@@ -358,6 +399,11 @@ const AddPlan = () => {
                 )}
               </tbody>
             </table>
+            {keHoach.DSCongViec.length === 0 && (
+              <p className="text-center font-medium text-[1.2rem] p-2 border-b border-border-color">
+                Trống
+              </p>
+            )}
           </div>
         </div>
       </div>

@@ -25,13 +25,9 @@ const Plan = () => {
     const [prefix, sort] = value.split("_");
     if (prefix === "ut") {
       setDSKeHoach((prev) => [
-        ...prev.sort(
-          ({ doUuTien: a, tenKeHoach: c }, { doUuTien: b, tenKeHoach: d }) => {
-            // console.log(c, a);
-            // console.log(d, b);
-            return sort === "desc" ? b - a : a - b;
-          }
-        ),
+        ...prev.sort(({ doUuTien: a }, { doUuTien: b }) => {
+          return sort === "desc" ? b - a : a - b;
+        }),
       ]);
     }
 
@@ -67,7 +63,11 @@ const Plan = () => {
           ),
         };
       });
-      setDSKeHoach(plans);
+      setDSKeHoach([
+        ...plans.sort(({ doUuTien: a }, { doUuTien: b }) => {
+          return b - a;
+        }),
+      ]);
     }
     fetchData();
   }, []);
