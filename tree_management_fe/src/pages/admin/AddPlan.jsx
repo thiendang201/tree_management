@@ -1,5 +1,6 @@
 import Input from "../../shared/Input";
 import { useEffect, useState } from "react";
+import { format, differenceInDays } from "date-fns";
 import { ImArrowRight2 } from "react-icons/im";
 import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
 import { buttonColor } from "../../config";
@@ -14,7 +15,6 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { treeList } from "../../services/treeServices";
 import DefaultImg from "../../assets/images/default.jpg";
-import { differenceInDays } from "date-fns";
 
 const AddPlan = () => {
   const [DSNhanVien, setDSNhanVien] = useState([
@@ -119,7 +119,36 @@ const AddPlan = () => {
       });
     !isExists && setKeHoach({ ...keHoach, DSCay: ListId });
     isOver && setOpenTreeSelect(false);
-    console.log(isOver);
+  };
+
+  const ThemCongViec = () => {
+    const { touched, ngayBatDau, ngayKetThuc, ...newCV } = congViec;
+
+    const newKH = {
+      ...keHoach,
+      DSCongViec: [
+        ...keHoach.DSCongViec,
+        {
+          ...newCV,
+          ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
+          ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
+        },
+      ],
+    };
+
+    setKeHoach(newKH);
+    setCongViec({
+      tenCongViec: "",
+      ngayBatDau: new Date(),
+      ngayKetThuc: new Date(),
+      DSNhanVien: [],
+      touched: {
+        tenCongViec: false,
+        DSNhanVien: false,
+        ngayBatDau: false,
+        ngayKetThuc: false,
+      },
+    });
   };
 
   const validate = () => {
@@ -133,12 +162,14 @@ const AddPlan = () => {
       ngayKetThuc,
       idNVPhuTrach,
     } = keHoach;
+
     const {
-      tenCongViec,
-      DSNhanVien,
-      ngayBatDau: cv_bd,
-      ngayKetThuc: cv_kt,
-    } = congViec;
+      tenCongViec: tcv,
+      DSNhanVien: dsnv,
+      ngayBatDau: tcv_bd,
+      ngayKetThuc: tcv_kt,
+    } = congViec.touched;
+
     const {
       tenKeHoach: t,
       moTa: m,
@@ -146,12 +177,6 @@ const AddPlan = () => {
       diaDiem: d,
       idNVPhuTrach: tnv,
     } = keHoach.touched;
-    const {
-      tenCongViec: tcv,
-      DSNhanVien: dsnv,
-      ngayBatDau: tcv_bd,
-      ngayKetThuc: tcv_kt,
-    } = congViec.touched;
 
     return {
       etenKeHoach: t && !tenKeHoach ? "Hãy nhập tên kế hoạch" : "",
@@ -171,6 +196,23 @@ const AddPlan = () => {
         differenceInDays(ngayKetThuc, ngayBatDau) < 0
           ? "Ngày kết thúc phải lớn hơn ngày bắt đầu"
           : "",
+    };
+  };
+
+  const validateCongViec = () => {
+    const {
+      tenCongViec,
+      DSNhanVien,
+      ngayBatDau: cv_bd,
+      ngayKetThuc: cv_kt,
+    } = congViec;
+    const {
+      tenCongViec: tcv,
+      DSNhanVien: dsnv,
+      ngayBatDau: tcv_bd,
+      ngayKetThuc: tcv_kt,
+    } = congViec.touched;
+    return {
       etenCongViec: tcv && !tenCongViec ? "Hãy nhập tên công việc" : "",
       eDSNhanVien:
         dsnv && !DSNhanVien.length ? "Hãy chọn nhân viên thực hiện" : "",
@@ -194,13 +236,10 @@ const AddPlan = () => {
     ediaDiem,
     eKHNKT,
     eKHNBD,
-    etenCongViec,
-    eDSNhanVien,
-    eCVBD,
-    eCVKT,
   } = validate();
+  const { etenCongViec, eDSNhanVien, eCVBD, eCVKT } = validateCongViec();
 
-  console.log(keHoach.touched);
+  // console.log(keHoach);
 
   return (
     <div className="p-2">
@@ -424,11 +463,20 @@ const AddPlan = () => {
               error={eDSNhanVien}
             />
             <div className="flex justify-end">
-              <Button
-                text="Thêm"
-                // onClick={ThemBenh}
-                icon={<MdSave size={"2rem"} fill="#fff" />}
-              />
+              {
+                <Button
+                  type={
+                    Object.values(congViec.touched).some(
+                      (touched) => !touched
+                    ) || Object.values(validateCongViec()).some((err) => err)
+                      ? "disable"
+                      : "solid"
+                  }
+                  text="Thêm"
+                  onClick={ThemCongViec}
+                  icon={<MdSave size={"2rem"} fill="#fff" />}
+                />
+              }
             </div>
           </div>
           <div>
@@ -452,33 +500,39 @@ const AddPlan = () => {
                   (
                     { tenCongViec, DSNhanVien, ngayBatDau, ngayKetThuc },
                     index
-                  ) => (
-                    <tr
-                      className="font-semibold border-b border-border-color"
-                      key={index}
-                    >
-                      <td className="py-[1.6rem] text-[1.2rem]">
-                        {tenCongViec}
-                      </td>
-                      <td className="py-[1.6rem] text-[1.2rem] ">
-                        {DSNhanVien}
-                      </td>
-                      <td className="text-center py-[1.6rem] text-[1.2rem]">
-                        {ngayBatDau}
-                      </td>
-                      <td className="text-center py-[1.6rem] text-[1.2rem]">
-                        {ngayKetThuc}
-                      </td>
-                      <td className="text-center py-[1.6rem] text-[1.2rem]">
-                        <button className="ml-1">
-                          <MdEdit size={18} />
-                        </button>
-                        <button className="ml-1">
-                          <MdDelete size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  )
+                  ) => {
+                    // const NV = DSNhanVien.map(())
+                    const [y_s, m_s, d_s] = ngayBatDau.split("-");
+                    const [y_e, m_e, d_e] = ngayKetThuc.split("-");
+
+                    return (
+                      <tr
+                        className="font-semibold border-b border-border-color"
+                        key={index}
+                      >
+                        <td className="py-[1.6rem] text-[1.2rem]">
+                          {tenCongViec}
+                        </td>
+                        <td className="py-[1.6rem] text-[1.2rem] ">
+                          {DSNhanVien}
+                        </td>
+                        <td className="text-center py-[1.6rem] text-[1.2rem]">
+                          {format(new Date(y_s, m_s, d_s), "dd/MM/yyyy")}
+                        </td>
+                        <td className="text-center py-[1.6rem] text-[1.2rem]">
+                          {format(new Date(y_e, m_e, d_e), "dd/MM/yyyy")}
+                        </td>
+                        <td className="text-center py-[1.6rem] text-[1.2rem]">
+                          <button className="ml-1">
+                            <MdEdit size={18} />
+                          </button>
+                          <button className="ml-1">
+                            <MdDelete size={18} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  }
                 )}
               </tbody>
             </table>
