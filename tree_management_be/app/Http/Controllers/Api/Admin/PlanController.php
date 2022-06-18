@@ -33,6 +33,11 @@ class PlanController extends Controller
         $result = $this->planService->update($request);
         return $result;
     }
+    public function search(Request $request)
+    {
+        $result = $this->planService->search($request);
+        return $result;
+    }
 
     public function delete($id)
     {
