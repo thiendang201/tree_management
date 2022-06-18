@@ -12,6 +12,9 @@ use App\Models\NVThucHien;
 
 class PlanService
 {
+    protected $limit = 8;
+    protected $field_search = array('KeHoach.*');
+
     public function getAll(){
 //        return KeHoach::all();
     return DB::table('KeHoach')->get();
@@ -29,7 +32,7 @@ class PlanService
         $plan->ngayBatDau = $request->ngayBatDau;
         $plan->ngayKetThuc = $request->ngayKetThuc;
         $plan->doUuTien = $request->doUuTien;
-        $plan->IdNVPhuTrach = $request->IdNVPhuTrach;
+        $plan->idNVPhuTrach = $request->idNVPhuTrach;
         $plan->trangThai = $request->trangThai;
 
         $DSCay = $request->DSCay;
@@ -76,7 +79,8 @@ class PlanService
         }
     }
 
-    public function update($request){
+    public function update($request){      
+
         $plan = KeHoach::find($request->id);
         $plan->tenKeHoach = $request->tenKeHoach;
         $plan->moTa = $request->moTa;
@@ -86,7 +90,8 @@ class PlanService
         $plan->doUuTien = $request->doUuTien;
         $plan->IdNVPhuTrach = $request->IdNVPhuTrach;
         $plan->trangThai = $request->trangThai;
-        $result = $plan->save();
+        $result = $plan->save();        
+
         if ($result){
             return ["Result" => "Data has been updated"];
         }
@@ -100,7 +105,8 @@ class PlanService
     {
 
         $plan = KeHoach::find($id);
-        $result = $plan->delete();
+        $plan->trangthai="4";
+        $result = $plan->save();
         if ($result)
         {
             return ["result"=>"delete success"];
@@ -110,4 +116,18 @@ class PlanService
             return ["result"=>"delete error"];
         }
     }
+
+    public function search($request){
+        $plan_name = $request->input('tenKeHoach');
+        $query = DB::table('KeHoach');
+
+        if ($plan_name!=null)
+                {
+                    $query->where('tenKeHoach', 'like', "%".$plan_name."%");
+                }
+
+        $result=$query->paginate($this->limit, $this->field_search);
+        return $result;
+    }
+    
 }

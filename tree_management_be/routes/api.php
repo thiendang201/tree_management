@@ -39,7 +39,7 @@ Route::prefix("admin")->group(function (){
         Route::get("list", [PlanController::class, 'index']);
         Route::post("create", [PlanController::class, 'create']);
         Route::put("update", [PlanController::class, 'update']);
-        Route::get("search", [PlanController::class, 'search']);
+        Route::post("search", [PlanController::class, 'search']);
         Route::delete("delete/{id}", [PlanController::class, 'delete']);
 
     });
