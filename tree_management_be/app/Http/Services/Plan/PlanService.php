@@ -91,6 +91,20 @@ class PlanService
         $plan->IdNVPhuTrach = $request->IdNVPhuTrach;
         $plan->trangThai = $request->trangThai;
         $result = $plan->save();        
+        $DSCay=$request->DSCay;
+        foreach ($DSCay as $value) {
+            $plan_tree=KeHoachCayXanh::where('idKeHoach',"=", $request->id);
+            $plan_tree = $plan_tree->delete();
+
+          }
+          foreach ($DSCay as $value) {
+            $plan_tree= new KeHoachCayXanh;
+            $plan_tree->idCay = $value;
+            $plan_tree->idKeHoach = $request->id;
+            //return $plan_tree;
+            $result = $plan_tree->save();
+
+          }  
 
         if ($result){
             return ["Result" => "Data has been updated"];
