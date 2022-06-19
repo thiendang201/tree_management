@@ -39,7 +39,6 @@ class TreeImageService
 
     public function create($request)
     {
-        $treeImage = new AnhCay();
         $prefix = 'AC';
         $table = 'AnhCay';
 //        $id = Helper::auto_id($prefix, $table);
@@ -64,7 +63,7 @@ class TreeImageService
             $id = Helper::auto_id($prefix, $table);
 //          $save->title = $name;
             $save->id = $id;
-            $save->hinhAnh = $imageName;
+            $save->hinhAnh = '/tree_image/'.$imageName;
             $save->idCay = $tree_id;
             $save->save();
         }
@@ -87,20 +86,30 @@ class TreeImageService
 
     public function update($request)
     {
-        $treeImage = AnhCay::find($request->id);
-        $treeImage->hinhAnh = $request->hinhAnh;
-//        if ($tree_id==null) {
-//            $treeImage->idCay = $request->idCay;
-//        } else{
-//            $treeImage->idCay = $tree_id;
-//        }
-        $treeImage->idCay = $request->idCay;
-        $result = $treeImage->save();
-        if ($result) {
-            return ["Result" => "Data has been updated"];
-        } else {
-            return ["Result" => "Update operation has been failed"];
+        $tree_id = $request->idCay;
+//        return $tree_id;
+        $deleted = $this->deleteByTreeId($tree_id);
+        if ($deleted) {
+            $created = $this->create($request);
+            if ($created) {
+                return response()->json(['file_updated'], 200);
+            }
         }
+        return response()->json(['file_update_fail'], 400);
+//        $treeImage = AnhCay::find($request->id);
+//        $treeImage->hinhAnh = $request->hinhAnh;
+////        if ($tree_id==null) {
+////            $treeImage->idCay = $request->idCay;
+////        } else{
+////            $treeImage->idCay = $tree_id;
+////        }
+//        $treeImage->idCay = $request->idCay;
+//        $result = $treeImage->save();
+//        if ($result) {
+//            return ["Result" => "Data has been updated"];
+//        } else {
+//            return ["Result" => "Update operation has been failed"];
+//        }
     }
 
     public function delete($request)

@@ -22,6 +22,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+//$prefix = config('apidoc.laravel.docs_url', '/doc');
+//$middleware = config('apidoc.laravel.middleware', []);
+//
+//Route::namespace('\Mpociot\ApiDoc\Http')
+//    ->middleware($middleware)
+//    ->group(function () use ($prefix) {
+//        Route::get($prefix, 'Controller@html')->name('apidoc');
+//        Route::get("$prefix.json", 'Controller@json')->name('apidoc.json');
+//    });
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -60,7 +70,7 @@ Route::prefix("admin")->group(function (){
         Route::get("list/{id}", [TreeImageController::class, 'index']);
         Route::get("detail/{id}", [TreeImageController::class, 'getById']);
         Route::post("create", [TreeImageController::class, 'create']);
-        Route::put("update", [TreeImageController::class, 'update']);
+        Route::post("update", [TreeImageController::class, 'update']);
         Route::delete("delete", [TreeImageController::class, 'delete']);
     });
 

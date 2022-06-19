@@ -89,7 +89,8 @@ class TreeService
         }
 
         if ($result){
-            return ["Result" => "Data has been saved"];
+//            return ["Result" => "Data has been saved"];
+            return $this->getById($id);
         }
         else
         {
