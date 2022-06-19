@@ -43,7 +43,13 @@ class PestImageService
         $pestImage->id = $id;
         $pestImage->hinhAnh = $request->hinhAnh;
         $pestImage->idSauBenh = $request->idSauBenh;
+//        if ($pest_id==null) {
+//            $pestImage->idSauBenh = $request->idSauBenh;
+//        } else{
+//            $pestImage->idSauBenh = $pest_id;
+//        }
         $result = $pestImage->save();
+//        return $result;
         if ($result){
             return ["Result" => "Data has been saved"];
         }
@@ -57,6 +63,11 @@ class PestImageService
         $pestImage = AnhSauBenh::find($request->id);
         $pestImage->hinhAnh = $request->hinhAnh;
         $pestImage->idSauBenh = $request->idSauBenh;
+//        if ($pest_id==null) {
+//            $pestImage->idSauBenh = $request->idSauBenh;
+//        } else{
+//            $pestImage->idSauBenh = $pest_id;
+//        }
         $result = $pestImage->save();
         if ($result){
             return ["Result" => "Data has been updated"];
@@ -82,6 +93,38 @@ class PestImageService
         else
         {
             return ["result"=>"delete error"];
+        }
+    }
+
+    public function deleteByPestStatusId($id)
+    {
+        $result = DB::table('AnhSauBenh')->where('AnhSauBenh.idSauBenh', '=', $id)->delete();
+        if ($result)
+        {
+            return ["result"=>"delete by foreign key success"];
+        }
+        else
+        {
+            return ["result"=>"delete by foreign key error"];
+        }
+    }
+
+    public function createByObject($request, $pest_id){
+        $pestImage = new AnhSauBenh();
+        $prefix='ASB';
+        $table='AnhSauBenh';
+        $id = Helper::auto_id($prefix, $table);
+        $pestImage->id = $id;
+        $pestImage->hinhAnh = $request['hinhAnh'];
+        $pestImage->idSauBenh = $pest_id;
+        $result = $pestImage->save();
+//        return $result;
+        if ($result){
+            return ["Result" => "Data has been saved"];
+        }
+        else
+        {
+            return ["Result" => "Operation failed"];
         }
     }
 }
