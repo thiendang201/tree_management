@@ -20,10 +20,12 @@ const Plan = () => {
   ];
   const [DSKeHoach, setDSKeHoach] = useState([]);
 
-  // const [sapXep, setSapXep] = useState(sapXepList[0].value);
-  const onChangeSapXep = ({ value }) => {
+  const [sapXep, setSapXep] = useState(sapXepList[0]);
+  const onChangeSapXep = (sx) => {
+    const { value } = sx;
     const [prefix, sort] = value.split("_");
     if (prefix === "ut") {
+      setSapXep(sx);
       setDSKeHoach((prev) => [
         ...prev.sort(({ doUuTien: a }, { doUuTien: b }) => {
           return sort === "desc" ? b - a : a - b;
@@ -98,6 +100,7 @@ const Plan = () => {
             options={sapXepList}
             classNamePrefix="keHoachSX"
             className="mt-0"
+            startValue={sapXep}
           />
           <div className="flex justify-end items-stretch">
             <div className="flex items-center relative">

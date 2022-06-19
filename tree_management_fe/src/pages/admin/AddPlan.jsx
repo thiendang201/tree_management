@@ -1,10 +1,7 @@
 import Input from "../../shared/Input";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { format, differenceInDays } from "date-fns";
 import { ImArrowRight2 } from "react-icons/im";
-import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
-import { buttonColor } from "../../config";
-import Button from "../../shared/Button";
 import {
   MdClear,
   MdDelete,
@@ -17,8 +14,15 @@ import { treeList } from "../../services/treeServices";
 import DefaultImg from "../../assets/images/default.jpg";
 import { staffList } from "../../services/staffServices";
 import { addPlan } from "../../services/planservices";
+import { useNavigate } from "react-router-dom";
+import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
+import { buttonColor } from "../../config";
+import Button from "../../shared/Button";
+import { Context } from "../../Layout";
 
 const AddPlan = () => {
+  const { addNotification } = React.useContext(Context);
+  const navigate = useNavigate();
   const [DSNhanVien, setDSNhanVien] = useState([]);
   const doUuTien = [
     { label: 1, value: 1 },
@@ -36,7 +40,7 @@ const AddPlan = () => {
     idNVPhuTrach: null,
     ngayBatDau: new Date(),
     ngayKetThuc: new Date(),
-    doUuTien: doUuTien[0].value,
+    doUuTien: doUuTien[0],
     DSCay: [],
     DSCongViec: [],
     touched: {
@@ -79,8 +83,8 @@ const AddPlan = () => {
 
   const onChange = (setState, type, name) => (data) => {
     if (type === "select") {
-      const { value } = data;
-      setState((prev) => ({ ...prev, [name]: value }));
+      // const { value } = data;
+      setState((prev) => ({ ...prev, [name]: data }));
       return;
     }
 
@@ -88,7 +92,6 @@ const AddPlan = () => {
       // const valueList = data.map(({ value }) => value);
       // setState((prev) => ({ ...prev, [name]: valueList }));
       setState((prev) => ({ ...prev, [name]: data }));
-      console.log(data);
       return;
     }
     if (type === "date") {
@@ -125,6 +128,7 @@ const AddPlan = () => {
         ...keHoach.DSCongViec,
         {
           ...newCV,
+          id: new Date().toISOString(),
           ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
           ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
         },
@@ -146,16 +150,31 @@ const AddPlan = () => {
     });
   };
 
+  const XoaCongViec = (idCV) => () => {
+    setKeHoach((keHoach) => ({
+      ...keHoach,
+      DSCongViec: keHoach.DSCongViec.filter(({ id }) => idCV !== id),
+    }));
+  };
+
   const ThemKeHoach = async () => {
-    const { touched, ngayBatDau, ngayKetThuc, ...attrs } = keHoach;
+    const { touched, ngayBatDau, ngayKetThuc, doUuTien, DSCongViec, ...attrs } =
+      keHoach;
     const keHoachMoi = {
       ...attrs,
+      doUuTien: doUuTien.value,
       ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
       ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
+      DSCongViec: DSCongViec.map(({ DSNhanVien, id, ...cv }) => ({
+        ...cv,
+        DSNhanVien: DSNhanVien.map(({ value }) => value),
+      })),
     };
-    console.log(JSON.stringify(keHoachMoi));
+    console.log(keHoachMoi);
     const res = await addPlan(keHoachMoi);
     console.log(res);
+    addNotification("Thành công", "Thêm kế hoạch mới thành công!");
+    navigate(-1);
   };
 
   const validate = () => {
@@ -171,13 +190,6 @@ const AddPlan = () => {
     } = keHoach;
 
     const {
-      tenCV: tcv,
-      DSNhanVien: dsnv,
-      ngayBatDau: tcv_bd,
-      ngayKetThuc: tcv_kt,
-    } = congViec.touched;
-
-    const {
       tenKeHoach: t,
       moTa: m,
       // DSCay: dsc,
@@ -191,10 +203,7 @@ const AddPlan = () => {
       ediaDiem: d && !diaDiem ? "Hãy nhập địa điểm" : "",
       // eDSCay: dsc && !DSCay.length ? "Hãy thêm ít nhất 1 cây" : "",
       eidNVPhuTrach: tnv && !idNVPhuTrach ? "Hãy chọn nhân viên phụ trách" : "",
-      eDSCongViec:
-        tcv || dsnv || tcv_bd || (tcv_kt && DSCongViec.length)
-          ? "Hãy thêm công việc"
-          : "",
+      eDSCongViec: !DSCongViec.length ? "Hãy thêm công việc" : "",
       eKHNBD:
         differenceInDays(ngayKetThuc, ngayBatDau) < 0
           ? "Ngày bắt đầu phải nhỏ hơn ngày kết thúc"
@@ -240,8 +249,6 @@ const AddPlan = () => {
     eKHNBD,
   } = validate();
   const { etenCV, eDSNhanVien, eCVBD, eCVKT } = validateCongViec();
-
-  console.log(keHoach.DSCongViec);
 
   return (
     <div className="p-2">
@@ -323,7 +330,7 @@ const AddPlan = () => {
             options={doUuTien}
             placeHolder="Độ ưu tiên"
             label="Độ ưu tiên"
-            startValue={doUuTien[0]}
+            startValue={keHoach.doUuTien}
             // error={sauBenhErrors.mucDo}
           />
           <Input
@@ -513,7 +520,7 @@ const AddPlan = () => {
               <tbody>
                 {keHoach.DSCongViec.map(
                   (
-                    { tenCV, DSNhanVien: dsnv, ngayBatDau, ngayKetThuc },
+                    { id, tenCV, DSNhanVien, ngayBatDau, ngayKetThuc },
                     index
                   ) => {
                     // const DSNV = DSNhanVien.map(({ label, value }) => {
@@ -528,7 +535,9 @@ const AddPlan = () => {
                         className="font-semibold border-b border-border-color"
                         key={index}
                       >
-                        <td className="py-[1.6rem] text-[1.2rem]">{tenCV}</td>
+                        <td className="py-[1.6rem] text-[1.2rem] pl-1">
+                          {tenCV}
+                        </td>
                         <td className="py-[1.6rem] text-[1.2rem] ">
                           {DSNV.join(", ")}
                         </td>
@@ -538,9 +547,9 @@ const AddPlan = () => {
                         <td className="text-center py-[1.6rem] text-[1.2rem]">
                           {`${d_e}/${m_e}/${y_e}`}
                         </td>
-                        <td className="text-center py-[1.6rem] text-[1.2rem]">
+                        <td className="text-center py-[1.6rem] text-[1.2rem] pr-1">
                           <button className="ml-1">
-                            <MdDelete size={18} />
+                            <MdDelete size={18} onClick={XoaCongViec(id)} />
                           </button>
                         </td>
                       </tr>
@@ -549,17 +558,19 @@ const AddPlan = () => {
                 )}
               </tbody>
             </table>
-            {Object.values(congViec.touched).every((touched) => !touched) &&
+            {Object.values(validateCongViec()).every((err) => !err) &&
               keHoach.DSCongViec.length === 0 && (
                 <p className="text-center font-medium text-[1.2rem] p-2 border-b border-border-color">
                   Trống
                 </p>
               )}
-            {eDSCongViec && keHoach.DSCongViec.length === 0 && (
-              <p className="ml-[0.6rem] text-danger text-center text-[1.2rem] p-2 border-b border-border-colorp-2 border-b border-border-color">
-                {eDSCongViec}
-              </p>
-            )}
+            {eDSCongViec &&
+              keHoach.DSCongViec.length === 0 &&
+              Object.values(validateCongViec()).some((err) => err) && (
+                <p className="ml-[0.6rem] text-danger text-center text-[1.2rem] p-2 border-b border-border-colorp-2 border-b border-border-color">
+                  {eDSCongViec}
+                </p>
+              )}
           </div>
         </div>
       </div>
