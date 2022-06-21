@@ -39,10 +39,13 @@ const Plan = () => {
           const [d_s, m_s, y_s] = a.split("/");
           const [d_e, m_e, y_e] = b.split("/");
           return sort === "desc"
-            ? differenceInDays(new Date(y_e, m_e, d_e), new Date(y_s, m_s, d_s))
+            ? differenceInDays(
+                new Date(y_e, m_e - 1, d_e),
+                new Date(y_s, m_s - 1, d_s)
+              )
             : differenceInDays(
-                new Date(y_s, m_s, d_s),
-                new Date(y_e, m_e, d_e)
+                new Date(y_s, m_s - 1, d_s),
+                new Date(y_e, m_e - 1, d_e)
               );
         }),
       ]);
@@ -57,11 +60,11 @@ const Plan = () => {
 
         return {
           ...attrs,
-          ngayBatDau: format(new Date(y_s, m_s, d_s), "dd/MM/yyyy"),
-          ngayKetThuc: format(new Date(y_e, m_e, d_e), "dd/MM/yyyy"),
+          ngayBatDau: format(new Date(y_s, m_s - 1, d_s), "dd/MM/yyyy"),
+          ngayKetThuc: format(new Date(y_e, m_e - 1, d_e), "dd/MM/yyyy"),
           soNgay: differenceInDays(
-            new Date(y_e, m_e, d_e),
-            new Date(y_s, m_s, d_s)
+            new Date(y_e, m_e - 1, d_e),
+            new Date(y_s, m_s - 1, d_s)
           ),
         };
       });

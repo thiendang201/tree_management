@@ -16,4 +16,9 @@ function search(params, page) {
   return postData(url, params);
 }
 
-export { treeCategoryList, treeList, search };
+function treeStatistic(params, page) {
+  const url = BASE_URL + `admin/statistic/tree?page=${page}`;
+  return postData(url, params);
+}
+
+export { treeCategoryList, treeList, search, treeStatistic };

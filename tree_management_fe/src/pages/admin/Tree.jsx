@@ -110,9 +110,7 @@ const Tree = () => {
       );
     }
 
-    setTimeout(() => {
-      searchTree();
-    }, 260);
+    searchTree();
   }, [filter, page]);
 
   const getMore = () => {
