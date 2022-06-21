@@ -13,6 +13,7 @@ import Slider from "rc-slider";
 import { format, getMonth, getYear } from "date-fns";
 import { planStatistic } from "../../services/planservices";
 import PlanItem from "../../components/plan/PlanItem";
+import { troubleStatistic } from "../../services/troubleServices";
 
 const Statistic = () => {
   const [trees, setTrees] = useState({
@@ -23,11 +24,16 @@ const Statistic = () => {
     data: [],
     total: 0,
   });
+  const [troubles, setTroubles] = useState({
+    data: [],
+    total: 0,
+  });
   const [treeCategories, setTreeCategories] = useState([]);
   const [chartCate, setChartCate] = useState({
     total: 0,
     data: [],
   });
+  const [chartTrouble, setChartTrouble] = useState([]);
   const [treeFilter, setTreeFilter] = useState({
     tree_category: null,
     age: null,
@@ -38,6 +44,10 @@ const Statistic = () => {
   const [planFilter, setPlanFilter] = useState({
     month: new Date(),
     status: "1",
+    page: 1,
+  });
+  const [troubleFilter, setTroubleFilter] = useState({
+    year: new Date(),
     page: 1,
   });
 
@@ -93,7 +103,41 @@ const Statistic = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planFilter]);
 
-  console.log(plans);
+  useEffect(() => {
+    async function fetchData() {
+      const { year, page } = troubleFilter;
+      const { data, total } = await troubleStatistic(getYear(year), page);
+      const newData =
+        page === 1
+          ? data
+          : (prev) => {
+              const ListId = prev.map(({ id }) => id);
+              const newt = [
+                ...prev,
+                ...data.filter(({ id }) => !ListId.includes(id)),
+              ];
+              return newt;
+            };
+      setTroubles({ total: total, data: newData });
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [troubleFilter]);
+
+  useEffect(() => {
+    const data = [];
+    for (let i = 1; i <= 12; i++) {
+      data.push({
+        label: i < 10 ? "0" + i : i,
+        count: troubles.data.reduce((prev, { created_at }) => {
+          const [, m] = created_at.split(" ")[0].split("-");
+          return m * 1 === i ? prev + 1 : prev;
+        }, 0),
+      });
+    }
+    setChartTrouble(data);
+  }, [troubles]);
 
   useEffect(() => {
     const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
@@ -580,9 +624,91 @@ const Statistic = () => {
             </ul>
           </div>
           <div>
-            <h2 className="font-semibold text-[1.8rem] py-1 border-b border-border-color">
-              Sự cố
-            </h2>
+            <div className="flex trouble mt-2 justify-between items-baseline border-b border-border-color">
+              <h2 className="font-semibold text-[1.8rem] py-1">Sự cố</h2>
+              <Input
+                type="date"
+                startValue={planFilter.month}
+                onChange={onChange(setTroubleFilter, "date", "year")}
+                className="w-[100%] bg-[#ffff] py-1 pr-0"
+                dateFormat="yyyy"
+                showYearPicker
+                maxDate={new Date()}
+                icon={<MdKeyboardArrowDown size={24} fill={buttonColor} />}
+              />
+            </div>
+            <div>
+              <Chart
+                type="area"
+                series={[
+                  {
+                    name: "Sự cố",
+                    data: chartTrouble.map(({ count }) => count),
+                  },
+                ]}
+                options={{
+                  chart: {
+                    height: 280,
+                    type: "area",
+                  },
+                  dataLabels: {
+                    enabled: false,
+                  },
+
+                  fill: {
+                    type: "gradient",
+                    gradient: {
+                      shadeIntensity: 1,
+                      opacityFrom: 0.7,
+                      opacityTo: 0.9,
+                      stops: [0, 90, 100],
+                    },
+                  },
+                  xaxis: {
+                    categories: chartTrouble.map(({ label }) => label),
+                  },
+                }}
+              />
+            </div>
+            <ul className="pb-2">
+              {troubles.data.map(({ id, tieuDe, created_at, viTri }, index) => {
+                const [y, m, d] = created_at.split(" ")[0].split("-");
+                return (
+                  <li key={id}>
+                    <div className="grid grid-cols-[20%_80%] py-1 border-b border-border-color">
+                      <div className="flex justify-center items-center text-[1.2rem] font-semibold">
+                        {index}
+                      </div>
+                      <div>
+                        <h2 className="font-semibold text-[1.4rem]">
+                          {tieuDe}
+                        </h2>
+                        <p className="font-medium text-[1.2rem]">{viTri}</p>
+                        <p className="font-medium text-[1.2rem]">
+                          {format(new Date(y, m - 1, d), "dd/MM/yyyy")}
+                        </p>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            {troubles.data.length === 0 && (
+              <p className="pb-2 font-semibold text-[1.2rem] border-b border-border-color text-center">
+                Trống
+              </p>
+            )}
+
+            {troubles.total > troubles.data.length && (
+              <div className="p-1 text-center">
+                <button
+                  className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold"
+                  onClick={getMore(setTroubleFilter)}
+                >
+                  Tải thêm
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

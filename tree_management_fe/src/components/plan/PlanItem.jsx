@@ -19,7 +19,7 @@ const PlanItem = ({
   const [y_s, m_s, d_s] = ngayBatDau.split("-");
   const [y_e, m_e, d_e] = ngayKetThuc.split("-");
   return (
-    <div className="grid grid-cols-[20%_80%] gap-1 bg-[#FAFBFD] rounded-[0.6rem] mt-1 first:mt-0">
+    <div className="grid grid-cols-[20%_80%] gap-1 bg-[#FAFBFD] rounded-[0.6rem] mt-1">
       <div className="m-1 relative">
         <div className="absolute top-1 left-1 text-[1.2rem] font-semibold">
           {index}

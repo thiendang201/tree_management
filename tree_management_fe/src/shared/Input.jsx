@@ -36,6 +36,7 @@ const Input = ({
   isMulti,
   dateFormat = "dd/MM/yyyy",
   showMonthYearPicker = false,
+  showYearPicker = false,
   icon,
 }) => {
   if (type === "select")
@@ -101,6 +102,7 @@ const Input = ({
             customInput={<CustomDateInput />}
             calendarClassName="shadow-md"
             showMonthYearPicker={showMonthYearPicker}
+            showYearPicker={showYearPicker}
           />
         </div>
         {error && <p className="text-danger text-[1.2rem]">{error}</p>}

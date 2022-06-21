@@ -104,11 +104,11 @@ class StatisticService
     {
         $year = (int) $request->input('year');
 //        $status = $request->input('status');
-        $query = DB::table('SuCo');
+        $query = DB::table('SuCo')->join('CayXanh', 'CayXanh.id', 'SuCo.idCay');;
         if ($year!=null) {
-            $query->where(DB::raw('year(created_at)'), '=', $year);
+            $query->where(DB::raw('year(SuCo.created_at)'), '=', $year);
         }
-        $result=$query->paginate($this->limit);
+        $result=$query->paginate($this->limit, array('SuCo.id', 'tieuDe', 'moTa', 'SuCo.created_at', 'CayXanh.viTri'));
         return $result;
     }
 
