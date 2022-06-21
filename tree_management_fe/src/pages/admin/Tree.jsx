@@ -10,8 +10,15 @@ import { buttonColor, primaryColor } from "../../config";
 import TreeCard from "../../components/tree/TreeCard";
 import TypeOfTree from "../../components/tree/TypeOfTree";
 import DeleteDialog from "../../shared/DeleteDialog";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 import { useNavigate } from "react-router-dom";
-import { treeCategoryList, treeList } from "../../services/treeServices";
+import {
+  search,
+  treeCategoryList,
+  treeList,
+} from "../../services/treeServices";
+import Input from "../../shared/Input";
 
 const Tree = () => {
   const [layout, setLayout] = useState("grid");
@@ -22,21 +29,37 @@ const Tree = () => {
   const [openTreeDeleteDialog, setOpenTreeDeleteDialog] = useState(false);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [openFilter, setOpenFilter] = useState(false);
+  const [filter, setFilter] = useState({
+    tenCay: "",
+    khuVuc: null,
+    tuoiCay: null,
+    loaiCay: null,
+  });
 
-  useEffect(() => {
-    const fetchData = async function () {
-      const { data } = await treeList(page);
-      setTrees((prev) => {
-        const ListId = prev.map(({ id }) => id);
-        const newt = [
-          ...prev,
-          ...data.filter(({ id }) => !ListId.includes(id)),
-        ];
-        return newt;
-      });
-    };
-    fetchData();
-  }, [page]);
+  const [filterTmp, setFilterTmp] = useState({
+    khuVuc: null,
+    loaiCay: null,
+    minTuoi: 0,
+    maxTuoi: 10,
+  });
+
+  // useEffect(() => {
+  //   const fetchData = async function () {
+  //     const { data, total } = await treeList(page);
+  //     setTotal(total);
+  //     setTrees((prev) => {
+  //       const ListId = prev.map(({ id }) => id);
+  //       const newt = [
+  //         ...prev,
+  //         ...data.filter(({ id }) => !ListId.includes(id)),
+  //       ];
+  //       return newt;
+  //     });
+  //   };
+  //   fetchData();
+  // }, [page]);
 
   useEffect(() => {
     const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
@@ -69,6 +92,50 @@ const Tree = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    async function searchTree() {
+      const { data, total } = await search(filter, page);
+      setTotal(total);
+      setTrees(
+        page === 1
+          ? data
+          : (prev) => {
+              const ListId = prev.map(({ id }) => id);
+              const newt = [
+                ...prev,
+                ...data.filter(({ id }) => !ListId.includes(id)),
+              ];
+              return newt;
+            }
+      );
+    }
+
+    setTimeout(() => {
+      searchTree();
+    }, 260);
+  }, [filter, page]);
+
+  const getMore = () => {
+    setPage((page) => page + 1);
+  };
+
+  const onChange = (setState, name, type) => (e) => {
+    setPage(1);
+    const { key } = e;
+
+    if (type === "select") {
+      const { value } = e;
+      setState((prev) => ({ ...prev, [name]: value }));
+    }
+
+    if (key === "Enter") {
+      if (type === "search") {
+        const { value } = e.target;
+        setState((state) => ({ ...state, [name]: value }));
+      }
+    }
+  };
+
   const selectAll = (e) => {
     const checked = e.target.checked;
     if (checked) {
@@ -97,6 +164,37 @@ const Tree = () => {
   const toAddTreePage = () => {
     navigate("add");
   };
+
+  const cateOptions = treeCategories.map(({ id, tenLoaiCay }) => ({
+    label: tenLoaiCay,
+    value: id,
+  }));
+  const khuVucOptions = [
+    {
+      label: "Cẩm Lệ",
+      value: "Cẩm Lệ",
+    },
+    {
+      label: "Liên Chiểu",
+      value: "Liên Chiểu",
+    },
+    {
+      label: "Sơn Trà",
+      value: "Sơn Trà",
+    },
+    {
+      label: "Hải Châu",
+      value: "Hải Châu",
+    },
+    {
+      label: "Thanh Khê",
+      value: "Thanh Khê",
+    },
+    {
+      label: "Ngũ Hành Sơn",
+      value: "Ngũ Hành Sơn",
+    },
+  ];
 
   return (
     <div className="grid grid-cols-[76%_24%] min-h-content">
@@ -133,15 +231,124 @@ const Tree = () => {
             </label>
           </div>
           <div className="flex justify-center">
-            <div>
-              <button className="font-semibold text-button-color translate-y-hover border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
+            <div className="relative">
+              <button
+                className="font-semibold text-button-color translate-y-hover border border-r-0 rounded-l-[0.6rem] flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]"
+                onClick={() => {
+                  setOpenFilter(!openFilter);
+                }}
+              >
                 <MdFilterList size={"1.6rem"} fill={buttonColor} /> Bộ lọc
               </button>
+              <CSSTransition
+                in={openFilter}
+                timeout={300}
+                classNames="dialog-slide-up"
+                unmountOnExit
+              >
+                <div className="absolute z-[12] top-[120%] left-[50%] translate-x-[-50%] bg-white min-w-[25rem] w-max p-2 shadow-lg rounded-[0.6rem] flex flex-col gap-2">
+                  <Input
+                    type="select"
+                    name="loaiCay"
+                    onChange={onChange(setFilterTmp, "loaiCay", "select")}
+                    options={cateOptions}
+                    startValue={
+                      cateOptions.find(
+                        ({ value }) => value === filterTmp.loaiCay
+                      ) || null
+                    }
+                    placeHolder="Chọn loại cây"
+                    label="Loại cây"
+                  />
+                  <div className="flex flex-col gap-[0.6rem]">
+                    <label className="font-semibold text-[1.4rem]">
+                      Tuổi cây
+                    </label>
+                    <p className="font-medium text-[1.2rem]">{`Từ ${filterTmp.minTuoi} đến ${filterTmp.maxTuoi} tuổi`}</p>
+                    <Slider
+                      range
+                      step={1}
+                      min={0}
+                      max={10}
+                      value={[filterTmp.minTuoi, filterTmp.maxTuoi]}
+                      marks={{
+                        0: 0,
+                        10: 10,
+                      }}
+                      onChange={([min, max]) => {
+                        setFilterTmp({
+                          ...filterTmp,
+                          minTuoi: min,
+                          maxTuoi: max,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="mt-[1.4rem]">
+                    <Input
+                      type="select"
+                      name="khuVuc"
+                      onChange={onChange(setFilterTmp, "khuVuc", "select")}
+                      options={khuVucOptions}
+                      startValue={
+                        khuVucOptions.find(
+                          ({ value }) => value === filterTmp.khuVuc
+                        ) || null
+                      }
+                      placeHolder="Chọn khu vực"
+                      label="Khu vực"
+                    />
+                  </div>
+                  <div className="flex gap-1 justify-end">
+                    <button
+                      className="py-1 px-2 bg-slate-50 font-semibold text-[1.2rem] rounded-[0.6rem]"
+                      onClick={() => {
+                        setFilter({
+                          tenCay: "",
+                          khuVuc: null,
+                          tuoiCay: null,
+                          loaiCay: null,
+                        });
+                        setFilterTmp({
+                          khuVuc: null,
+                          minTuoi: 0,
+                          maxTuoi: 10,
+                          loaiCay: null,
+                        });
+                      }}
+                    >
+                      Reset
+                    </button>
+                    <button
+                      className="py-1 px-2 bg-primary font-semibold text-[1.2rem] rounded-[0.6rem] text-white"
+                      onClick={() => {
+                        const { minTuoi, maxTuoi, ...conLai } = filterTmp;
+                        setFilter({
+                          ...filter,
+                          ...conLai,
+                          tuoiCay: [minTuoi, maxTuoi],
+                        });
+                        setOpenFilter(!openFilter);
+                      }}
+                    >
+                      Áp dụng
+                    </button>
+                  </div>
+                </div>
+              </CSSTransition>
             </div>
-            <div>
-              <button className="font-semibold text-button-color translate-y-hover border  flex gap-[0.5rem] items-center p-[0.5rem] border-border-color pr-[0.6rem]">
-                <RiSearchLine size={"1.6rem"} fill={buttonColor} /> Tìm kiếm
-              </button>
+            <div className="relative">
+              <input
+                type="search"
+                className="outline-none font-semibold text-button-color border  flex gap-[0.5rem] items-center p-[0.5rem] pl-[2.5rem] border-border-color pr-[0.6rem]"
+                placeholder="Tìm kiếm"
+                onKeyUp={onChange(setFilter, "tenCay", "search")}
+              />
+              <RiSearchLine
+                size={"1.6rem"}
+                fill={buttonColor}
+                className="absolute top-[50%] left-[0.5rem] translate-y-[-50%]"
+              />
             </div>
             <div className="relative">
               <button
@@ -174,6 +381,9 @@ const Tree = () => {
         </div>
         <div className="bg-[#F7F8FA] border border-t-0 border-border-color rounded-b-[2.5rem]">
           <div className="p-[2.4rem] pb-1">
+            {trees.length === 0 && (
+              <p className="font-semibold text-[1.2rem] text-center">Trống</p>
+            )}
             {layout === "grid" ? (
               <div className="grid grid-cols-4 gap-1">
                 {trees.map((tree) => (
@@ -188,9 +398,14 @@ const Tree = () => {
             ) : undefined}
           </div>
           <div className="p-1 text-center">
-            <button className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold">
-              Tải thêm
-            </button>
+            {total > trees.length && (
+              <button
+                className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold"
+                onClick={getMore}
+              >
+                Tải thêm
+              </button>
+            )}
           </div>
         </div>
       </div>
