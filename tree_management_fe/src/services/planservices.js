@@ -11,4 +11,11 @@ function addPlan(data) {
   return postData(url, data);
 }
 
-export { planList, addPlan };
+function planStatistic(status, year, month, page) {
+  const url =
+    BASE_URL +
+    `admin/statistic/plan?page=${page}&status=${status}&year=${year}&month=${month}`;
+  return getData(url);
+}
+
+export { planList, addPlan, planStatistic };

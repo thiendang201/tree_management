@@ -1,6 +1,6 @@
 import { AiFillStar } from "react-icons/ai";
 
-const DoUuTien = ({ size = 20, doUuTien = 0 }) => {
+const DoUuTien = ({ size = 20, doUuTien = 0, className = "" }) => {
   const fillStarList = new Array(doUuTien).fill(
     <AiFillStar size={size} fill="#6926D7" />
   );
@@ -8,7 +8,7 @@ const DoUuTien = ({ size = 20, doUuTien = 0 }) => {
     <AiFillStar size={size} fill="#EEE3FF" />
   );
   return (
-    <ul className="flex gap-[0.2rem] justify-center">
+    <ul className={`flex gap-[0.2rem] justify-center ${className}`}>
       {[...fillStarList, ...starList].map((item, index) => (
         <li key={index}>{item}</li>
       ))}

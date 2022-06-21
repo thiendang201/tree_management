@@ -11,15 +11,19 @@ import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous2
 import { CSSTransition } from "react-transition-group";
 import Slider from "rc-slider";
 import { format, getMonth, getYear } from "date-fns";
+import { planStatistic } from "../../services/planservices";
+import PlanItem from "../../components/plan/PlanItem";
 
 const Statistic = () => {
   const [trees, setTrees] = useState({
     data: [],
-    page: 1,
+    total: 0,
+  });
+  const [plans, setPlans] = useState({
+    data: [],
     total: 0,
   });
   const [treeCategories, setTreeCategories] = useState([]);
-  const [plans, setPlans] = useState([]);
   const [chartCate, setChartCate] = useState({
     total: 0,
     data: [],
@@ -29,21 +33,23 @@ const Statistic = () => {
     age: null,
     status: null,
     position: null,
+    page: 1,
   });
   const [planFilter, setPlanFilter] = useState({
-    month: getMonth(new Date()),
-    year: getYear(new Date()),
-    status: 1,
+    month: new Date(),
+    status: "1",
+    page: 1,
   });
+
   const [openDiaLog, setOpenDialog] = useState({
     treeAge: false,
   });
 
   useEffect(() => {
     async function fetchData() {
-      const { data, total } = await treeStatistic(treeFilter, trees.page);
+      const { data, total } = await treeStatistic(treeFilter, treeFilter.page);
       const newData =
-        trees.page === 1
+        treeFilter.page === 1
           ? data
           : (prev) => {
               const ListId = prev.map(({ id }) => id);
@@ -53,14 +59,41 @@ const Statistic = () => {
               ];
               return newt;
             };
-      setTrees({ ...trees, total: total, data: newData });
+      setTrees({ total: total, data: newData });
     }
 
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [treeFilter, trees.page]);
+  }, [treeFilter]);
 
-  console.log(trees, treeFilter);
+  useEffect(() => {
+    async function fetchData() {
+      const { month, status, page } = planFilter;
+      const { data, total } = await planStatistic(
+        status,
+        getYear(month),
+        getMonth(month) + 1,
+        page
+      );
+      const newData =
+        page === 1
+          ? data
+          : (prev) => {
+              const ListId = prev.map(({ id }) => id);
+              const newt = [
+                ...prev,
+                ...data.filter(({ id }) => !ListId.includes(id)),
+              ];
+              return newt;
+            };
+      setPlans({ total: total, data: newData });
+    }
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planFilter]);
+
+  console.log(plans);
 
   useEffect(() => {
     const colors = ["#8B75D7", "#26A0FC", "#26E7A6", "#FBB938", "#FD8080"];
@@ -101,6 +134,13 @@ const Statistic = () => {
       return;
     }
 
+    if (type === "radio") {
+      const {
+        target: { value },
+      } = data;
+      setState((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (type === "select-multi") {
       setState((prev) => ({ ...prev, [name]: value }));
       return;
@@ -129,6 +169,7 @@ const Statistic = () => {
       age: null,
       status: null,
       position: null,
+      page: 1,
     });
   };
 
@@ -379,17 +420,26 @@ const Statistic = () => {
               <div className="p-1 text-center">
                 <button
                   className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold"
-                  onClick={getMore(setTrees)}
+                  onClick={getMore(setTreeFilter)}
                 >
                   Tải thêm
                 </button>
               </div>
             )}
           </div>
-          <div className="mt-2">
-            <h2 className="font-semibold text-[1.8rem] py-1 border-b border-border-color">
-              Kế hoạch
-            </h2>
+          <div className="mt-2 plan">
+            <div className="flex justify-between items-baseline border-b border-border-color">
+              <h2 className="font-semibold text-[1.8rem] py-1">Kế hoạch</h2>
+              <Input
+                type="date"
+                startValue={planFilter.month}
+                onChange={onChange(setPlanFilter, "date", "month")}
+                className="w-[100%] bg-[#ffff] py-1 pr-0"
+                dateFormat="MMMM, yyyy"
+                showMonthYearPicker
+                icon={<MdKeyboardArrowDown size={24} fill={buttonColor} />}
+              />
+            </div>
             <div className="flex gap-1">
               {[
                 {
@@ -406,19 +456,21 @@ const Statistic = () => {
                 },
                 {
                   text: "Quá hạn",
-                  value: "4",
+                  value: "0",
                 },
               ].map(({ text, value }) => (
-                <div>
+                <div key={value}>
                   <input
                     type="radio"
                     name="trangThaiKeHoach"
-                    id="trangThaiKeHoach"
+                    id={`trangThaiKeHoach${value}`}
                     className="appearance-none peer"
                     value={value}
+                    checked={planFilter.status === value}
+                    onChange={onChange(setPlanFilter, "radio", "status")}
                   />
                   <label
-                    htmlFor="trangThaiKeHoach"
+                    htmlFor={`trangThaiKeHoach${value}`}
                     className="block text-[1.2rem] font-semibold py-[0.8rem] px-[1.6rem] rounded-[0.4rem] peer-checked:bg-primary peer-checked:text-white bg-[#F7F8FA]"
                   >
                     {text}
@@ -426,6 +478,29 @@ const Statistic = () => {
                 </div>
               ))}
             </div>
+            <ul className="py-2">
+              {plans.data.map((plan, index) => (
+                <li key={plan.id}>
+                  <PlanItem {...plan} index={index + 1} />
+                </li>
+              ))}
+            </ul>
+            {plans.data.length === 0 && (
+              <p className="pb-2 font-semibold text-[1.2rem] border-b border-border-color text-center">
+                Trống
+              </p>
+            )}
+
+            {plans.total > plans.data.length && (
+              <div className="p-1 text-center">
+                <button
+                  className="translate-y-hover border rounded-full bg-white px-[1.6rem] py-[0.8rem] text-[1.2rem] font-semibold"
+                  onClick={getMore(setPlanFilter)}
+                >
+                  Tải thêm
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="px-2 pt-2">
