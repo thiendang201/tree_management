@@ -6,9 +6,12 @@ const DeleteDialog = ({
   handleClose,
   handleClick,
   loading = false,
+  containerClassName = "",
 }) => {
   return (
-    <div className="absolute top-[120%] left-[50%] translate-x-[-50%] shadow-lg bg-white min-w-max rounded-[0.8rem] overflow-hidden">
+    <div
+      className={`absolute top-[120%] left-[50%] translate-x-[-50%] shadow-lg bg-white min-w-max rounded-[0.8rem] overflow-hidden ${containerClassName} `}
+    >
       <h3 className="text-[1.4rem] font-semibold p-[1.2rem] bg-[#FAFBFD] ">
         Thông báo
       </h3>

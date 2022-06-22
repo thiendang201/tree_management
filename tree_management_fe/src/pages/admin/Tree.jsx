@@ -126,6 +126,7 @@ const Tree = () => {
     async function removeTree() {
       const res = await remove({ ids: treeIds });
       console.log(res);
+      setPage(1);
       setFilter({ ...filter });
       addNotification("Thành công", `Đã xóa ${treeIds.length} cây!`);
       setTreeIds([]);

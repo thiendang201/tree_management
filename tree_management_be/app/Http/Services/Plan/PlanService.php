@@ -17,7 +17,7 @@ class PlanService
 
     public function getAll(){
 //        return KeHoach::all();
-    return DB::table('KeHoach')->get();
+    return DB::table('KeHoach')->where('KeHoach.trangThai', '!=', 4)->get();
     }
 
     public function create($request){

@@ -25,6 +25,14 @@ async function putData(url, data) {
     console.error(error);
   }
 }
+async function deleteData(url) {
+  try {
+    const res = await axios.delete(url);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
 async function uploadImg(data) {
   try {
     const res = await axios.post(
@@ -37,4 +45,4 @@ async function uploadImg(data) {
   }
 }
 
-export { getData, postData, uploadImg, putData };
+export { getData, postData, uploadImg, putData, deleteData };

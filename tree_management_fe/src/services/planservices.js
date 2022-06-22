@@ -1,5 +1,5 @@
 import { BASE_URL } from "../config";
-import { getData, postData } from "./services";
+import { deleteData, getData, postData } from "./services";
 
 function planList() {
   const url = BASE_URL + "admin/plan/list";
@@ -11,6 +11,11 @@ function addPlan(data) {
   return postData(url, data);
 }
 
+function deletePlan(id) {
+  const url = BASE_URL + "admin/plan/delete/" + id;
+  return deleteData(url);
+}
+
 function planStatistic(status, year, month, page) {
   const url =
     BASE_URL +
@@ -18,4 +23,4 @@ function planStatistic(status, year, month, page) {
   return getData(url);
 }
 
-export { planList, addPlan, planStatistic };
+export { planList, addPlan, planStatistic, deletePlan };

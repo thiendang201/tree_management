@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdAddCircle, MdDelete, MdEdit, MdRemoveRedEye } from "react-icons/md";
 import { RiSearchLine } from "react-icons/ri";
@@ -9,7 +9,10 @@ import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import Input from "../../shared/Input";
 import { useEffect } from "react";
-import { planList } from "../../services/planservices";
+import { deletePlan, planList } from "../../services/planservices";
+import { CSSTransition } from "react-transition-group";
+import DeleteDialog from "../../shared/DeleteDialog";
+import { Context } from "../../Layout";
 
 const Plan = () => {
   const sapXepList = [
@@ -18,8 +21,11 @@ const Plan = () => {
     { label: "Ngày bắt đầu giảm dần", value: "nbd_desc" },
     { label: "Ngày bắt đầu tăng dần", value: "nbd_asc" },
   ];
+  const { addNotification } = React.useContext(Context);
   const [DSKeHoach, setDSKeHoach] = useState([]);
-
+  const [dsIdKeHoach, setDSIdKeHoach] = useState([]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [sapXep, setSapXep] = useState(sapXepList[0]);
   const onChangeSapXep = (sx) => {
     const { value } = sx;
@@ -74,8 +80,33 @@ const Plan = () => {
         }),
       ]);
     }
-    fetchData();
-  }, []);
+    dsIdKeHoach.length === 0 && fetchData();
+  }, [dsIdKeHoach]);
+
+  const onCheck = (id) => () => {
+    setOpenDeleteDialog(false);
+    if (dsIdKeHoach.includes(id)) {
+      setDSIdKeHoach(dsIdKeHoach.filter((idkh) => idkh !== id));
+    } else {
+      setDSIdKeHoach([...dsIdKeHoach, id]);
+    }
+  };
+  const handleDiaLog = () => {
+    setOpenDeleteDialog(!openDeleteDialog);
+  };
+
+  const removePlan = () => {
+    setDeleteLoading(true);
+    async function removeTree() {
+      Promise.all(dsIdKeHoach.map((id) => deletePlan(id))).then((values) => {
+        addNotification("Thành công", `Đã xóa ${dsIdKeHoach.length} kế hoạch!`);
+        setDSIdKeHoach([]);
+        setOpenDeleteDialog(false);
+        setDeleteLoading(false);
+      });
+    }
+    removeTree();
+  };
 
   const navigate = useNavigate();
 
@@ -125,11 +156,28 @@ const Plan = () => {
             className="rounded-[0.4rem] py-0"
             onClick={toAddPlanPage}
           />
-          <Button
-            text="Xóa"
-            icon={<MdDelete size={"2rem"} fill="#fff" />}
-            className="rounded-[0.4rem] py-0"
-          />
+          <div className="relative">
+            <Button
+              text="Xóa"
+              icon={<MdDelete size={"2rem"} fill="#fff" />}
+              className="rounded-[0.4rem] py-0 h-[100%]"
+              onClick={handleDiaLog}
+            />
+            <CSSTransition
+              in={openDeleteDialog && dsIdKeHoach.length > 0}
+              timeout={300}
+              classNames="dialog-slide-up"
+              unmountOnExit
+            >
+              <DeleteDialog
+                message={`Bạn có muốn xóa ${dsIdKeHoach.length} kế hoạch đã chọn không?`}
+                handleClose={handleDiaLog}
+                handleClick={removePlan}
+                loading={deleteLoading}
+                containerClassName="left-[-4rem]"
+              />
+            </CSSTransition>
+          </div>
         </div>
       </div>
       <div className="border border-t-0 border-border-color pb-[2.5rem] rounded-b-[2.5rem]">
@@ -164,7 +212,12 @@ const Plan = () => {
                   key={id}
                 >
                   <td className="text-center py-[1.6rem] text-[1.2rem]">
-                    <input type="checkbox" className="translate-y-[0.3rem]" />
+                    <input
+                      type="checkbox"
+                      className="translate-y-[0.3rem]"
+                      onChange={onCheck(id)}
+                      checked={dsIdKeHoach.includes(id)}
+                    />
                   </td>
                   <td className="py-[1.6rem] text-[1.2rem]">{tenKeHoach}</td>
                   <td className="py-[1.6rem] text-[1.2rem] ">{diaDiem}</td>
