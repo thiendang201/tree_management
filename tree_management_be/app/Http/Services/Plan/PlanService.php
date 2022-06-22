@@ -17,8 +17,16 @@ class PlanService
 
     public function getAll(){
 //        return KeHoach::all();
-    return DB::table('KeHoach')->get();
+    return DB::table('KeHoach')->where('KeHoach.trangThai', '!=', 4)->get();
     }
+
+    public function getById($id){
+        //        $tree = CayXanh::find($id);
+                $plan = DB::table('KeHoach')
+                    ->where('KeHoach.id', '=', $id)->get();
+                
+                return $plan;
+            }
 
     public function create($request){
         $plan = new KeHoach;
@@ -92,11 +100,11 @@ class PlanService
         $plan->trangThai = $request->trangThai;
         $result = $plan->save();        
         $DSCay=$request->DSCay;
-        foreach ($DSCay as $value) {
+        // foreach ($DSCay as $value) {
             $plan_tree=KeHoachCayXanh::where('idKeHoach',"=", $request->id);
             $plan_tree = $plan_tree->delete();
 
-          }
+        //   }
           foreach ($DSCay as $value) {
             $plan_tree= new KeHoachCayXanh;
             $plan_tree->idCay = $value;
