@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import { MdAddCircle, MdFilterList, MdDelete } from "react-icons/md";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
@@ -14,19 +14,23 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useNavigate } from "react-router-dom";
 import {
+  remove,
   search,
   treeCategoryList,
   treeList,
 } from "../../services/treeServices";
 import Input from "../../shared/Input";
+import { Context } from "../../Layout";
 
 const Tree = () => {
+  const { addNotification } = React.useContext(Context);
   const [layout, setLayout] = useState("grid");
   const [trees, setTrees] = useState([]);
   const [treeCategories, setTreeCategories] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [treeIds, setTreeIds] = useState([]);
   const [openTreeDeleteDialog, setOpenTreeDeleteDialog] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -117,6 +121,20 @@ const Tree = () => {
     setPage((page) => page + 1);
   };
 
+  const removeTrees = () => {
+    setDeleteLoading(true);
+    async function removeTree() {
+      const res = await remove({ ids: treeIds });
+      console.log(res);
+      setFilter({ ...filter });
+      addNotification("Thành công", `Đã xóa ${treeIds.length} cây!`);
+      setTreeIds([]);
+      setOpenTreeDeleteDialog(false);
+      setDeleteLoading(false);
+    }
+    removeTree();
+  };
+
   const onChange = (setState, name, type) => (e) => {
     setPage(1);
     const { key } = e;
@@ -161,6 +179,10 @@ const Tree = () => {
 
   const toAddTreePage = () => {
     navigate("add");
+  };
+
+  const toEditPage = (id) => () => {
+    navigate("edit/" + id);
   };
 
   const cateOptions = treeCategories.map(({ id, tenLoaiCay }) => ({
@@ -364,6 +386,8 @@ const Tree = () => {
                 <DeleteDialog
                   message={`Bạn có muốn xóa ${treeIds.length} cây đã chọn không?`}
                   handleClose={handleTreeDelete}
+                  handleClick={removeTrees}
+                  loading={deleteLoading}
                 />
               </CSSTransition>
             </div>
@@ -390,6 +414,7 @@ const Tree = () => {
                     {...tree}
                     checked={treeIds.includes(tree.id)}
                     handleCheck={handleCheck}
+                    onEdit={toEditPage(tree.id)}
                   />
                 ))}
               </div>

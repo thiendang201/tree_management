@@ -1,3 +1,4 @@
+import { MdEdit } from "react-icons/md";
 import DefaultImg from "../../assets/images/default.jpg";
 
 const TreeCard = ({
@@ -8,10 +9,11 @@ const TreeCard = ({
   onClick = undefined,
   checked,
   handleCheck,
+  onEdit,
 }) => {
   return (
     <div
-      className="bg-white rounded-[2rem] p-[1.2rem] cursor-pointer translate-y-hover"
+      className="bg-white rounded-[2rem] p-[1.2rem] cursor-pointer translate-y-hover group"
       onClick={onClick}
     >
       <div
@@ -24,6 +26,14 @@ const TreeCard = ({
           checked={checked}
           onChange={handleCheck(id)}
         />
+        <div className="absolute top-[60%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0 group-hover:opacity-100 group-hover:top-[50%] transition-all duration-300">
+          <button
+            className="p-1 bg-white rounded-full shadow-md "
+            onClick={onEdit}
+          >
+            <MdEdit size={20} />
+          </button>
+        </div>
       </div>
       <div className="mt-[2.2rem] pb-1 text-center">
         <h2 className="font-semibold text-[1.4rem]">{id}</h2>

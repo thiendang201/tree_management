@@ -7,15 +7,16 @@ import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import Input from "../../shared/Input";
 import { useEffect } from "react";
-import { create, treeCategoryList } from "../../services/treeServices";
+import { getTree, treeCategoryList, update } from "../../services/treeServices";
 import { format } from "date-fns";
 import React from "react";
 import { Context } from "../../Layout";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { uploadImg } from "../../services/services";
 import Pest from "../../components/pest/Pest";
 
-const AddTree = () => {
+const UpdateTree = () => {
+  const { id } = useParams();
   const mucDo = [
     { value: "1", label: "Nhẹ" },
     { value: "2", label: "Vừa" },
@@ -43,6 +44,47 @@ const AddTree = () => {
     },
   });
 
+  useEffect(() => {
+    async function fetchData() {
+      const [tree] = await getTree(id);
+
+      for (let i = 0; i < tree.images.length; i++) {
+        tree["AnhCay" + (i + 1)] = tree.images[i];
+      }
+      for (let i = 0; i < tree.pests.length; i++) {
+        for (let j = 0; j < tree.pests[i].images.length; j++) {
+          tree.pests[i]["AnhSauBenh" + (j + 1)] = tree.pests[i].images[j];
+        }
+        tree.pests[i].AnhSauBenh = tree.images;
+
+        const [y, m, d] = tree.pests[i].ngayPhatBenh.split("-");
+        tree.pests[i].ngayPhatBenh = new Date(y, m - 1, d);
+
+        if (tree.pests[i].ngayHet) {
+          const [y, m, d] = tree.pests[i].ngayHet.split("-");
+          tree.pests[i].ngayHet = new Date(y, m - 1, d);
+        }
+      }
+      const [y, m, d] = tree.ngayTrong.split("-");
+      tree.ngayTrong = new Date(y, m - 1, d);
+      tree.tinhTrangSauBenh = tree.pests;
+      tree.AnhCay = tree.images;
+      tree.dsIdSauBenh = tree.pests.map(({ id }) => id);
+
+      setTree((prev) => ({
+        ...prev,
+        ...tree,
+        touched: {
+          tenCay: true,
+          viTri: true,
+        },
+      }));
+    }
+    fetchData();
+  }, []);
+
+  console.log(tree);
+
   const [sauBenh, setSauBenh] = useState({
     id: new Date().toISOString(),
     tenBenh: "",
@@ -69,7 +111,6 @@ const AddTree = () => {
         value: id,
       }));
       setTreeCategories(categories);
-      setTree({ ...tree, idLoaiCay: categories[0].value });
     };
     fetchData();
   }, []);
@@ -129,13 +170,21 @@ const AddTree = () => {
   const upload = async (files) => {
     const res = await Promise.all(
       files.map((file) => {
+        if (file?.hinhAnh) return file?.hinhAnh;
+        console.log(22, file);
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "quanlycayxanh");
         return uploadImg(formData);
       })
     );
-    return res.map(({ data: { url } }) => url);
+    return res.map((item) => {
+      if (typeof item === "string") return item;
+      const {
+        data: { url },
+      } = item;
+      return url;
+    });
   };
 
   const xoaSauBenh = (id) => (e) => {
@@ -147,9 +196,7 @@ const AddTree = () => {
     });
   };
 
-  console.log(tree);
-
-  const themCay = async () => {
+  const capNhatCay = async () => {
     setLoading(true);
     let {
       ngayTrong,
@@ -190,8 +237,8 @@ const AddTree = () => {
     upload([AnhCay1, AnhCay2, AnhCay3, AnhCay4].filter((item) => item)).then(
       async (values) => {
         const cayMoi = { ...khac, ngayTrong, tinhTrangSauBenh, AnhCay: values };
-        const res = await create(cayMoi);
-        addNotification("Thành công", "Thêm cây mới thành công!");
+        const res = await update(cayMoi);
+        addNotification("Thành công", "Cập nhật cây thành công!");
         navigate(-1);
       }
     );
@@ -247,7 +294,7 @@ const AddTree = () => {
           <div className="bg-[#F7F8FA] rounded-full p-1">
             <ImArrowRight2 size={24} color={buttonColor} />
           </div>
-          <h2 className="text-[1.4rem] font-semibold">Thêm cây xanh</h2>
+          <h2 className="text-[1.4rem] font-semibold">Cập nhật cây xanh</h2>
         </div>
         <div>
           {!loading && (
@@ -259,7 +306,7 @@ const AddTree = () => {
                   : "solid"
               }
               text="Lưu"
-              onClick={themCay}
+              onClick={capNhatCay}
               icon={<MdSave size={"2rem"} fill="#fff" />}
             />
           )}
@@ -464,6 +511,7 @@ const AddTree = () => {
               name="tenCay"
               placeHolder="Điền tên cây"
               label=" Tên cây"
+              startValue={tree.tenCay}
               onChange={onChange(setTree, "text", "tenCay")}
               onBlur={onBlur("tenCay", setTree)}
               error={treeErrors.etenCay}
@@ -482,6 +530,7 @@ const AddTree = () => {
               onChange={onChange(setTree, "text", "viTri")}
               onBlur={onBlur("viTri", setTree)}
               error={treeErrors.eviTri}
+              startValue={tree.viTri}
             />
           </div>
         </div>
@@ -490,4 +539,4 @@ const AddTree = () => {
   );
 };
 
-export default AddTree;
+export default UpdateTree;

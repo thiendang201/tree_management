@@ -21,11 +21,13 @@ class TreeService
     protected $field_search = array('CayXanh.*','LoaiCay.tenLoaiCay as tenLoaiCay', 'AnhCay.hinhAnh as hinhAnh');
     protected $treeImageService;
     protected $pestStatusService;
+    protected $pestImageService;
 
-    public function __construct(TreeImageService $treeImageService, PestStatusService $pestStatusService)
+    public function __construct(TreeImageService $treeImageService, PestStatusService $pestStatusService, PestImageService $pestImageService)
     {
         $this->treeImageService=$treeImageService;
         $this->pestStatusService=$pestStatusService;
+        $this->pestImageService=$pestImageService;
     }
 
     public function getAll($request){
@@ -106,6 +108,25 @@ class TreeService
         $tree->trangThai = $request->trangThai;
         $tree->idLoaiCay = $request->idLoaiCay;
         $result = $tree->save();
+
+        $listPestId = $request->dsIdSauBenh;
+        foreach ($listPestId as $id){
+            $this->pestImageService->deleteByPestStatusId($id);
+        }        
+        $this->treeImageService->deleteByTreeId($request->id);
+        $this->pestStatusService->deleteByTreeId($request->id);
+
+        $listTreeImage = $request->AnhCay;
+        $listPestStatus= $request->tinhTrangSauBenh;
+        foreach ($listTreeImage as $item){
+            $treeImage = $this->treeImageService->createByObject($item,$request->id);
+        }
+        foreach ($listPestStatus as $item){
+            $pestStatus = $this->pestStatusService->createByObject($item, $request->id);
+        }
+       
+        
+
         if ($result){
             return ["Result" => "Data has been updated"];
         }

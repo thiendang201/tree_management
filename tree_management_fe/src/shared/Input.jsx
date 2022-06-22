@@ -114,7 +114,14 @@ const Input = ({
 
   if (type === "image") {
     const id = new Date().toISOString() + classNamePrefix;
-    const url = startValue ? URL.createObjectURL(startValue) : "";
+    // const url = startValue ? URL.createObjectURL(startValue) : "";
+    let url = "";
+    if (startValue && !startValue?.hinhAnh) {
+      url = URL.createObjectURL(startValue);
+    }
+    if (startValue && startValue?.hinhAnh) {
+      url = startValue.hinhAnh;
+    }
     return (
       <div className="relative h-[100%]">
         <label

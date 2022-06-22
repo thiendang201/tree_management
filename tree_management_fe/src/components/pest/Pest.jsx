@@ -28,7 +28,7 @@ const Pest = ({
     mucDoClass.bgColor = "bg-[#FBECE9]";
   }
 
-  const mucDoText = "before:content-['Nhẹ']";
+  let mucDoText = "before:content-['Nhẹ']";
   if (mucDo === "2") mucDoText = "before:content-['Vừa']";
   if (mucDo === "3") mucDoText = "before:content-['Nặng']";
 

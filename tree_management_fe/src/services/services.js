@@ -17,6 +17,14 @@ async function postData(url, data) {
     console.error(error);
   }
 }
+async function putData(url, data) {
+  try {
+    const res = await axios.put(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
 async function uploadImg(data) {
   try {
     const res = await axios.post(
@@ -29,4 +37,4 @@ async function uploadImg(data) {
   }
 }
 
-export { getData, postData, uploadImg };
+export { getData, postData, uploadImg, putData };
