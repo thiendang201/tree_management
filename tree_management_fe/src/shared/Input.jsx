@@ -1,23 +1,23 @@
 import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import Select from "react-select";
 import { BsCalendarFill } from "react-icons/bs";
 import { forwardRef } from "react";
 import { vi } from "date-fns/locale";
 
-import { FilePond, registerPlugin } from "react-filepond";
+// import { FilePond, registerPlugin } from "react-filepond";
 
-import "filepond/dist/filepond.min.css";
-import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
-import FilePondPluginImagePreview from "filepond-plugin-image-preview";
-import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
-import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
-import DefaultImage from "../assets/images/default-img.png";
+// import "filepond/dist/filepond.min.css";
+// import FilePondPluginImageExifOrientation from "filepond-plugin-image-exif-orientation";
+// import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+// import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+// import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
 
-registerPlugin(
-  FilePondPluginImageExifOrientation,
-  FilePondPluginImagePreview,
-  FilePondPluginFileValidateType
-);
+// registerPlugin(
+//   FilePondPluginImageExifOrientation,
+//   FilePondPluginImagePreview,
+//   FilePondPluginFileValidateType
+// );
 
 const Input = ({
   className,
@@ -35,6 +35,7 @@ const Input = ({
   minDate,
   isMulti,
   dateFormat = "dd/MM/yyyy",
+  isClearable = false,
   showMonthYearPicker = false,
   showYearPicker = false,
   icon,
@@ -99,6 +100,7 @@ const Input = ({
             minDate={minDate}
             onChange={onChange}
             locale={vi}
+            isClearable={isClearable}
             customInput={<CustomDateInput />}
             calendarClassName="shadow-md"
             showMonthYearPicker={showMonthYearPicker}
@@ -110,19 +112,101 @@ const Input = ({
     );
   }
 
-  if (type === "image")
+  if (type === "image") {
+    const id = new Date().toISOString() + classNamePrefix;
+    const url = startValue ? URL.createObjectURL(startValue) : "";
     return (
-      <FilePond
-        files={startValue}
-        onupdatefiles={onChange}
-        allowMultiple
-        maxFiles={4}
-        allowFileTypeValidation
-        labelFileTypeNotAllowed="Vui lòng chọn hình ảnh"
-        acceptedFileTypes={["image/png", "image/jpeg"]}
-        labelIdle={`<img src=${DefaultImage}> <p>Kéo hình ảnh vào đây hoặc <span class="filepond--label-action">duyệt</span></p>`}
-      />
+      <div className="relative h-[100%]">
+        <label
+          htmlFor={id}
+          style={{ backgroundImage: `url(${url})` }}
+          className={`border-dashed border-primary h-[100%] flex justify-center items-center font-medium rounded-[0.6rem] text-[1.2rem] hover:bg-[#FAFBFD] transition-all duration-300 bg-center bg-no-repeat bg-cover ${
+            !startValue && "border-2"
+          }`}
+        >
+          {!startValue && "Chọn ảnh"}
+        </label>
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          id={id}
+          filename={startValue?.name}
+          className="opacity-0 absolute"
+          onChange={onChange}
+        />
+      </div>
     );
+  }
+  // return (
+  //   <FilePond
+  //     files={startValue}
+  //     onupdatefiles={onChange}
+  //     allowMultiple
+  //     maxFiles={4}
+  //     // server={"https://api.cloudinary.com/v1_1/tdimgclound01/image/upload"}
+  //     allowFileTypeValidation
+  //     // server={{
+  //     //   process: (
+  //     //     fieldName,
+  //     //     file,
+  //     //     metadata,
+  //     //     load,
+  //     //     error,
+  //     //     progress,
+  //     //     abort,
+  //     //     transfer,
+  //     //     options
+  //     //   ) => {
+  //     //     // fieldName is the name of the input field
+  //     //     // file is the actual file object to send
+  //     //     const formData = new FormData();
+  //     //     formData.append("file", file, file.name);
+  //     //     formData.append("upload_preset", "quanlycayxanh");
+  //     //     const request = new XMLHttpRequest();
+  //     //     request.open(
+  //     //       "POST",
+  //     //       "https://api.cloudinary.com/v1_1/tdimgclound01/image/upload"
+  //     //     );
+
+  //     //     // Should call the progress method to update the progress to 100% before calling load
+  //     //     // Setting computable to false switches the loading indicator to infinite mode
+  //     //     request.upload.onprogress = (e) => {
+  //     //       progress(e.lengthComputable, e.loaded, e.total);
+  //     //     };
+
+  //     //     // Should call the load method when done and pass the returned server file id
+  //     //     // this server file id is then used later on when reverting or restoring a file
+  //     //     // so your server knows which file to return without exposing that info to the client
+  //     //     request.onload = function () {
+  //     //       if (request.status >= 200 && request.status < 300) {
+  //     //         // the load method accepts either a string (id) or an object
+  //     //         console.log(request.responseText);
+  //     //         load(request.responseText);
+  //     //       } else {
+  //     //         // Can call the error method if something is wrong, should exit after
+  //     //         error("oh no");
+  //     //       }
+  //     //     };
+
+  //     //     request.send(formData);
+
+  //     //     // Should expose an abort method so the request can be cancelled
+  //     //     return {
+  //     //       abort: () => {
+  //     //         // This function is entered if the user has tapped the cancel button
+  //     //         request.abort();
+
+  //     //         // Let FilePond know the request has been cancelled
+  //     //         abort();
+  //     //       },
+  //     //     };
+  //     //   },
+  //     // }}
+  //     labelFileTypeNotAllowed="Vui lòng chọn hình ảnh"
+  //     acceptedFileTypes={["image/png", "image/jpeg"]}
+  //     labelIdle={`<img src=${DefaultImage}> <p>Kéo hình ảnh vào đây hoặc <span class="filepond--label-action">duyệt</span></p>`}
+  //   />
+  // );
 
   if (type === "textarea")
     return (

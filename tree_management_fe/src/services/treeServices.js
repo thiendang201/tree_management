@@ -1,5 +1,5 @@
 import { BASE_URL } from "../config";
-import { getData, postData } from "./services";
+import { getData, postData, postDataWithFile } from "./services";
 
 function treeCategoryList() {
   const url = BASE_URL + "admin/tree-category/list";
@@ -16,9 +16,14 @@ function search(params, page) {
   return postData(url, params);
 }
 
+function create(tree) {
+  const url = BASE_URL + `admin/tree/create`;
+  return postData(url, tree);
+}
+
 function treeStatistic(params, page) {
   const url = BASE_URL + `admin/statistic/tree?page=${page}`;
   return postData(url, params);
 }
 
-export { treeCategoryList, treeList, search, treeStatistic };
+export { treeCategoryList, treeList, search, treeStatistic, create };

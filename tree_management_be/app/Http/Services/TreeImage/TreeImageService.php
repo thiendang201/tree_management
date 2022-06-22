@@ -143,7 +143,7 @@ class TreeImageService
         $table = 'AnhCay';
         $id = Helper::auto_id($prefix, $table);
         $treeImage->id = $id;
-        $treeImage->hinhAnh = $request['hinhAnh'];
+        $treeImage->hinhAnh = $request;
         $treeImage->idCay = $tree_id;
         $result = $treeImage->save();
         if ($result) {

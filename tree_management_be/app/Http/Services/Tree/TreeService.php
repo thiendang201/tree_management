@@ -18,7 +18,7 @@ class TreeService
 
     protected $limit = 8;
     protected $fields = array('CayXanh.*','AnhCay.hinhAnh as hinhAnh');
-    protected $field_search = array('CayXanh.*','LoaiCay.tenLoaiCay as tenLoaiCay');
+    protected $field_search = array('CayXanh.*','LoaiCay.tenLoaiCay as tenLoaiCay', 'AnhCay.hinhAnh as hinhAnh');
     protected $treeImageService;
     protected $pestStatusService;
 
@@ -72,7 +72,7 @@ class TreeService
         $tree->tenCay = $request->tenCay;
         $tree->viTri = $request->viTri;
         $tree->ngayTrong = $request->ngayTrong;
-        $tree->trangThai = $request->trangThai;
+        $tree->trangThai = "1";
         $tree->idLoaiCay = $request->idLoaiCay;
 
         $listTreeImage = $request->AnhCay;
@@ -90,7 +90,7 @@ class TreeService
 
         if ($result){
 //            return ["Result" => "Data has been saved"];
-            return $this->getById($id);
+            return $this->getById($id)[0];
         }
         else
         {
@@ -151,8 +151,8 @@ class TreeService
 //            ->where('idLoaiCay', '=', $tree_category)
 //            ->whereBetween(DB::raw('timestampdiff(YEAR, ngayTrong, date(now()))'), $tree_age)
 //            ->paginate($this->limit, $this->field_search);
-        $query = DB::table('cayxanh')
-            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay');
+        $query = DB::table('cayxanh')->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay');
+            
         if ($tree_name!=null)
         {
             $query->where('tenCay', 'like', "%".$tree_name."%");
@@ -169,6 +169,12 @@ class TreeService
         {
             $query->whereBetween(DB::raw('timestampdiff(YEAR, ngayTrong, date(now()))'), $tree_age);
         }
+        $query->leftJoin('AnhCay', 'AnhCay.idCay', 'CayXanh.id')
+            ->where('CayXanh.trangThai', '=', '1')
+            ->orderBy('CayXanh.created_at')
+            ->orderBy('AnhCay.created_at')
+            ->groupBy('CayXanh.id');
+
         $result=$query->paginate($this->limit, $this->field_search);
         return $result;
     }

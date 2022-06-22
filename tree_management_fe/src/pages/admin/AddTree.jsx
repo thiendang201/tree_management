@@ -1,65 +1,124 @@
-import { MdAddCircle, MdSave } from "react-icons/md";
+import { MdSave } from "react-icons/md";
 import { ImArrowRight2 } from "react-icons/im";
-import ReactDatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useState } from "react";
 
 import FluentTreeDeciduous20Filled from "../../assets/icons/FluentTreeDeciduous20Filled";
 import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import Input from "../../shared/Input";
+import { useEffect } from "react";
+import { create, treeCategoryList } from "../../services/treeServices";
+import { format } from "date-fns";
+import React from "react";
+import { Context } from "../../Layout";
+import { useNavigate } from "react-router";
+import { uploadImg } from "../../services/services";
+import Pest from "../../components/pest/Pest";
 
 const AddTree = () => {
-  const options = [
-    { value: "1", label: "Cây họ bàng" },
-    { value: "2", label: "Cây lá rộng" },
-    { value: "3", label: "Cây lá nhỏ" },
-  ];
   const mucDo = [
     { value: "1", label: "Nhẹ" },
     { value: "2", label: "Vừa" },
     { value: "3", label: "Nặng" },
   ];
+  const { addNotification } = React.useContext(Context);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
+  const [treeCategories, setTreeCategories] = useState([]);
   const [tree, setTree] = useState({
     idLoaiCay: null,
     tenCay: "",
     ngayTrong: new Date(),
     viTri: "",
-    hinhAnh: [],
+    AnhCay: [],
+    AnhCay1: "",
+    AnhCay2: "",
+    AnhCay3: "",
+    AnhCay4: "",
     tinhTrangSauBenh: [],
+    touched: {
+      tenCay: false,
+      // viTri: false,
+    },
   });
 
   const [sauBenh, setSauBenh] = useState({
+    id: new Date().toISOString(),
     tenBenh: "",
-    mucDo: null,
+    mucDo: mucDo[0].value,
     moTa: "",
     ngayPhatBenh: new Date(),
     ngayHet: null,
-    hinhAnh: [],
+    AnhSauBenh: [],
+    AnhSauBenh1: "",
+    AnhSauBenh2: "",
+    AnhSauBenh3: "",
+    AnhSauBenh4: "",
     touched: {
       tenBenh: false,
       moTa: false,
     },
   });
 
-  const onSelect = ({ value }) => {
-    setTree({ ...tree, idLoaiCay: value });
-  };
+  useEffect(() => {
+    const fetchData = async function () {
+      let categories = await treeCategoryList();
+      categories = categories.map(({ id, tenLoaiCay }) => ({
+        label: tenLoaiCay,
+        value: id,
+      }));
+      setTreeCategories(categories);
+      setTree({ ...tree, idLoaiCay: categories[0].value });
+    };
+    fetchData();
+  }, []);
 
-  const onDateChange = (date) => {
-    setTree({ ...tree, ngayTrong: date });
+  const onChange = (setState, type, name) => (data) => {
+    if (type === "select") {
+      const { value } = data;
+      setState((prev) => ({ ...prev, [name]: value }));
+      return;
+    }
+
+    if (type === "select-multi") {
+      // const valueList = data.map(({ value }) => value);
+      // setState((prev) => ({ ...prev, [name]: valueList }));
+      setState((prev) => ({ ...prev, [name]: data }));
+      return;
+    }
+    if (type === "date") {
+      setState((prev) => ({ ...prev, [name]: data }));
+      return;
+    }
+    if (type === "image") {
+      const {
+        target: { files },
+      } = data;
+      setState((prev) => ({ ...prev, [name]: files[0] }));
+      return;
+    }
+
+    const {
+      target: { value },
+    } = data;
+    setState((prev) => ({ ...prev, [name]: value }));
   };
 
   const ThemBenh = () => {
     setTree({ ...tree, tinhTrangSauBenh: [...tree.tinhTrangSauBenh, sauBenh] });
     setSauBenh({
+      id: new Date().toISOString(),
       tenBenh: "",
-      mucDo: null,
+      mucDo: mucDo[0].value,
       moTa: "",
       ngayPhatBenh: new Date(),
       ngayHet: null,
-      hinhAnh: [],
+      AnhSauBenh: [],
+      AnhSauBenh1: "",
+      AnhSauBenh2: "",
+      AnhSauBenh3: "",
+      AnhSauBenh4: "",
       touched: {
         tenBenh: false,
         moTa: false,
@@ -67,9 +126,94 @@ const AddTree = () => {
     });
   };
 
-  const onBlurSauBenh = (name) => (e) => {
-    setSauBenh({ ...sauBenh, touched: { ...sauBenh.touched, [name]: true } });
+  const upload = async (files) => {
+    const res = await Promise.all(
+      files.map((file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "quanlycayxanh");
+        return uploadImg(formData);
+      })
+    );
+    return res.map(({ data: { url } }) => url);
   };
+
+  const xoaSauBenh = (id) => (e) => {
+    const { tinhTrangSauBenh: list } = tree;
+
+    setTree({
+      ...tree,
+      tinhTrangSauBenh: list.filter(({ id: _id }) => _id !== id),
+    });
+  };
+
+  console.log(tree.tinhTrangSauBenh);
+
+  const themCay = async () => {
+    setLoading(true);
+    let {
+      ngayTrong,
+      AnhCay,
+      AnhCay1,
+      AnhCay2,
+      AnhCay3,
+      AnhCay4,
+      tinhTrangSauBenh,
+      touched,
+      ...khac
+    } = tree;
+
+    ngayTrong = format(ngayTrong, "yyyy-MM-dd");
+    for (let i = 0; i < tinhTrangSauBenh.length; i++) {
+      let {
+        AnhSauBenh,
+        AnhSauBenh1,
+        AnhSauBenh2,
+        AnhSauBenh3,
+        AnhSauBenh4,
+        ngayPhatBenh,
+        ngayHet,
+      } = tinhTrangSauBenh[i];
+
+      AnhSauBenh = [AnhSauBenh1, AnhSauBenh2, AnhSauBenh3, AnhSauBenh4].filter(
+        (anh) => anh
+      );
+      upload(AnhSauBenh).then((values) => {
+        tinhTrangSauBenh[i].AnhSauBenh = values;
+        tinhTrangSauBenh[i].ngayPhatBenh = format(ngayPhatBenh, "yyyy-MM-dd");
+        tinhTrangSauBenh[i].ngayHet = ngayHet
+          ? format(ngayHet, "yyyy-MM-dd")
+          : ngayHet;
+      });
+    }
+
+    upload([AnhCay1, AnhCay2, AnhCay3, AnhCay4].filter((item) => item)).then(
+      async (values) => {
+        const cayMoi = { ...khac, ngayTrong, tinhTrangSauBenh, AnhCay: values };
+        const res = await create(cayMoi);
+        addNotification("Thành công", "Thêm cây mới thành công!");
+        navigate(-1);
+      }
+    );
+  };
+
+  const onBlur = (name, setState) => (e) => {
+    // setSauBenh({ ...sauBenh, touched: { ...sauBenh.touched, [name]: true } });
+    setState((prev) => ({
+      ...prev,
+      touched: { ...prev.touched, [name]: true },
+    }));
+  };
+
+  const validateTree = () => {
+    const { touched, tenCay, viTri } = tree;
+
+    return {
+      etenCay: touched.tenCay && !tenCay ? "Hãy nhập tên cây" : "",
+      // eviTri: touched.viTri && !viTri ? "Hãy nhập vị trí" : "",
+    };
+  };
+
   const validateSauBenh = () => {
     const errors = {
       tenBenh: "",
@@ -84,11 +228,13 @@ const AddTree = () => {
     return errors;
   };
 
-  console.log(tree);
-  console.log(JSON.stringify(tree));
+  // console.log(tree.tinhTrangSauBenh);
+  // console.log(tree);
+  // console.log(JSON.stringify(tree));
   // console.log(sauBenh);
 
   const sauBenhErrors = validateSauBenh();
+  const treeErrors = validateTree();
 
   return (
     <div className="p-[2rem] pb-0">
@@ -104,7 +250,20 @@ const AddTree = () => {
           <h2 className="text-[1.4rem] font-semibold">Thêm cây xanh</h2>
         </div>
         <div>
-          <Button text="Lưu" icon={<MdSave size={"2rem"} fill="#fff" />} />
+          {!loading && (
+            <Button
+              type={
+                Object.values(tree.touched).some((touched) => !touched) ||
+                Object.values(treeErrors).some((err) => err)
+                  ? "disable"
+                  : "solid"
+              }
+              text="Lưu"
+              onClick={themCay}
+              icon={<MdSave size={"2rem"} fill="#fff" />}
+            />
+          )}
+          {loading && <Button type="loading" />}
         </div>
       </div>
       <div className="grid grid-cols-[66%_34%] min-h-content border border-border-color border-t-0">
@@ -113,14 +272,39 @@ const AddTree = () => {
             <div className="flex items-center py-2 px-[2rem] border rounded-t-[2.5rem] border-border-color">
               <h2 className="text-[1.4rem] font-semibold">Hình ảnh</h2>
             </div>
-            <div className="border border-border-color border-t-0 rounded-b-[2.5rem] p-2 bg-[#FAFBFD] tree-img">
-              <Input
-                type="image"
-                startValue={tree.hinhAnh}
-                onChange={(files) => {
-                  setTree({ ...tree, hinhAnh: files });
-                }}
-              />
+            <div className="border border-border-color border-t-0 rounded-b-[2.5rem] p-2 tree-img grid grid-cols-3 grid-rows-2 min-h-[30rem] gap-1">
+              <div className="row-[1/3]">
+                <Input
+                  classNamePrefix="AnhCay1"
+                  type="image"
+                  startValue={tree.AnhCay1}
+                  onChange={onChange(setTree, "image", "AnhCay1")}
+                />
+              </div>
+              <div className="row-[1/3]">
+                <Input
+                  classNamePrefix="AnhCay2"
+                  type="image"
+                  startValue={tree.AnhCay2}
+                  onChange={onChange(setTree, "image", "AnhCay2")}
+                />
+              </div>
+              <div>
+                <Input
+                  classNamePrefix="AnhCay3"
+                  type="image"
+                  startValue={tree.AnhCay3}
+                  onChange={onChange(setTree, "image", "AnhCay3")}
+                />
+              </div>
+              <div>
+                <Input
+                  classNamePrefix="AnhCay4"
+                  type="image"
+                  startValue={tree.AnhCay4}
+                  onChange={onChange(setTree, "image", "AnhCay4")}
+                />
+              </div>
             </div>
           </div>
           <div>
@@ -135,19 +319,18 @@ const AddTree = () => {
                   name="tenBenh"
                   placeHolder="Điền tên bệnh"
                   label=" Tên bệnh"
-                  onChange={({ target: { value, name } }) => {
-                    setSauBenh({ ...sauBenh, [name]: value });
-                  }}
-                  onBlur={onBlurSauBenh("tenBenh")}
+                  onChange={onChange(setSauBenh, "text", "tenBenh")}
+                  onBlur={onBlur("tenBenh", setSauBenh)}
                   error={sauBenhErrors.tenBenh}
                   startValue={sauBenh.tenBenh}
                 />
                 <Input
                   type="select"
                   name="mucDo"
-                  onChange={({ value }) => {
-                    setSauBenh({ ...sauBenh, mucDo: value });
-                  }}
+                  onChange={onChange(setSauBenh, "select", "mucDo")}
+                  startValue={
+                    mucDo.find(({ value }) => value === sauBenh.mucDo) || null
+                  }
                   options={mucDo}
                   placeHolder="Chọn mức độ"
                   label="Mức độ"
@@ -161,10 +344,8 @@ const AddTree = () => {
                     placeHolder="Điền mô tả tình trạng bệnh"
                     label="Mô tả"
                     className="resize-y min-h-[16rem]"
-                    onChange={({ target: { value, name } }) => {
-                      setSauBenh({ ...sauBenh, [name]: value });
-                    }}
-                    onBlur={onBlurSauBenh("moTa")}
+                    onChange={onChange(setSauBenh, "text", "moTa")}
+                    onBlur={onBlur("moTa", setSauBenh)}
                     error={sauBenhErrors.moTa}
                     startValue={sauBenh.moTa}
                   />
@@ -173,33 +354,57 @@ const AddTree = () => {
                   type="date"
                   label="Ngày phát bệnh"
                   startValue={sauBenh.ngayPhatBenh}
-                  onChange={(date) => {
-                    setSauBenh({ ...sauBenh, ngayPhatBenh: date });
-                  }}
+                  onChange={onChange(setSauBenh, "date", "ngayPhatBenh")}
+                  maxDate={new Date()}
                   className="w-[100%]"
                 />
                 <Input
                   type="date"
                   label="Ngày hết"
                   startValue={sauBenh.ngayHet}
-                  onChange={(date) => {
-                    setSauBenh({ ...sauBenh, ngayHet: date });
-                  }}
+                  onChange={onChange(setSauBenh, "date", "ngayHet")}
+                  isClearable
                   className="w-[100%]"
+                  minDate={sauBenh.ngayPhatBenh}
                   placeHolder="Chọn ngày"
                 />
                 <div className="col-span-2">
                   <label className="font-semibold text-[1.4rem]">
                     Hình ảnh
                   </label>
-                  <div className="p-1 mt-[0.6rem] bg-[#FAFBFD] pest-img rounded-[0.4rem]">
-                    <Input
-                      type="image"
-                      startValue={sauBenh.hinhAnh}
-                      onChange={(files) => {
-                        setSauBenh({ ...sauBenh, hinhAnh: files });
-                      }}
-                    />
+                  <div className="min-h-[20rem] p-1 mt-[0.6rem] pest-img rounded-[0.4rem] grid grid-cols-4 gap-1">
+                    <div>
+                      <Input
+                        classNamePrefix="AnhSauBenh1"
+                        type="image"
+                        startValue={sauBenh.AnhSauBenh1}
+                        onChange={onChange(setSauBenh, "image", "AnhSauBenh1")}
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        classNamePrefix="AnhSauBenh2"
+                        type="image"
+                        startValue={sauBenh.AnhSauBenh2}
+                        onChange={onChange(setSauBenh, "image", "AnhSauBenh2")}
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        classNamePrefix="AnhSauBenh3"
+                        type="image"
+                        startValue={sauBenh.AnhSauBenh3}
+                        onChange={onChange(setSauBenh, "image", "AnhSauBenh3")}
+                      />
+                    </div>
+                    <div>
+                      <Input
+                        classNamePrefix="AnhSauBenh4"
+                        type="image"
+                        startValue={sauBenh.AnhSauBenh4}
+                        onChange={onChange(setSauBenh, "image", "AnhSauBenh4")}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -224,10 +429,18 @@ const AddTree = () => {
                   Lịch sử sâu bệnh
                 </h2>
                 <div>
-                  {tree.tinhTrangSauBenh.length === 0 && (
+                  {tree.tinhTrangSauBenh.length === 0 ? (
                     <p className="text-[1.2rem] font-medium text-center">
                       Cây chưa bị sâu bệnh!
                     </p>
+                  ) : (
+                    tree.tinhTrangSauBenh.map((sauBenh, index) => (
+                      <Pest
+                        key={index}
+                        {...sauBenh}
+                        onRemove={xoaSauBenh(sauBenh.id)}
+                      />
+                    ))
                   )}
                 </div>
               </div>
@@ -239,33 +452,36 @@ const AddTree = () => {
             <Input
               type="select"
               name="idLoaiCay"
-              onChange={onSelect}
-              options={options}
+              onChange={onChange(setTree, "select", "idLoaiCay")}
+              options={treeCategories}
               placeHolder="Chọn loại cây"
               label="Loại cây"
+              startValue={treeCategories.find(
+                ({ value }) => value === tree.idLoaiCay
+              )}
             />
             <Input
               name="tenCay"
               placeHolder="Điền tên cây"
               label=" Tên cây"
-              onChange={({ target: { value, name } }) => {
-                setTree({ ...tree, [name]: value });
-              }}
+              onChange={onChange(setTree, "text", "tenCay")}
+              onBlur={onBlur("tenCay", setTree)}
+              error={treeErrors.etenCay}
             />
             <Input
               type="date"
               label="Ngày trồng"
               startValue={tree.ngayTrong}
-              onChange={onDateChange}
+              onChange={onChange(setTree, "date", "ngayTrong")}
               className="w-[100%]"
             />
             <Input
               name="viTri"
               placeHolder="Điền vị trí"
               label="Vị trí"
-              onChange={({ target: { value, name } }) => {
-                setTree({ ...tree, [name]: value });
-              }}
+              onChange={onChange(setTree, "text", "viTri")}
+              // onBlur={onBlur("viTri", setTree)}
+              // error={treeErrors.eviTri}
             />
           </div>
         </div>

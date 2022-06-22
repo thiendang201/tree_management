@@ -3,7 +3,7 @@ import { GoKebabVertical } from "react-icons/go";
 const TypeOfTree = ({ id, tenLoaiCay, ratio, color }) => {
   return (
     <tr className="font-semibold">
-      <td className="text-center py-1 text-[1.2rem]">#{id}</td>
+      <td className="text-center py-1 text-[1.2rem]">{id}</td>
       <td className="py-1 text-[1.2rem]">{tenLoaiCay}</td>
       <td className="text-center py-1">
         <span

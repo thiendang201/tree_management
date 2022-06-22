@@ -22,6 +22,10 @@ class Helper
 //        $maxId = substr($stringId, strlen($prefix))*1 ;
 //        return $prefix.($maxId+1);
         $stringId = DB::table($table)->pluck('id');
+        if ($stringId==null ||  count($stringId) == 0)
+        {
+            return $prefix.'1';
+        }
         $lenPrefix = strlen($prefix);
         $idList = [];
         foreach ($stringId as $id)

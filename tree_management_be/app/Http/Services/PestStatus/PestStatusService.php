@@ -137,7 +137,7 @@ class PestStatusService
         $pest->moTa = $request['moTa'];
         $pest->mucDo = $request['mucDo'];
         $pest->ngayPhatBenh = $request['ngayPhatBenh'];
-        $pest->ngayHet = null;
+        $pest->ngayHet = $request['ngayHet'];
 //        $pest->idCay = $request->idCay;
         $pest->idCay = $tree_id;
         $listPestImage = $request['AnhSauBenh'];

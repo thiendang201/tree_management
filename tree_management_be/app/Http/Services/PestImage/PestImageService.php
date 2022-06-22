@@ -150,7 +150,7 @@ class PestImageService
         $table='AnhSauBenh';
         $id = Helper::auto_id($prefix, $table);
         $pestImage->id = $id;
-        $pestImage->hinhAnh = $request['hinhAnh'];
+        $pestImage->hinhAnh = $request;
         $pestImage->idSauBenh = $pest_id;
         $result = $pestImage->save();
 //        return $result;
