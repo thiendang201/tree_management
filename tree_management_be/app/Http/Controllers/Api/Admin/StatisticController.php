@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Services\Statistic\StatisticService;
 use Illuminate\Http\Request;
+use PDF;
 
 class StatisticController extends Controller
 {
@@ -33,4 +34,9 @@ class StatisticController extends Controller
         $result = $this->statisticService->getStaffByPlan($request);
         return $result;
     }
+
+    public function exportStatistic(){
+
+    }
+
 }

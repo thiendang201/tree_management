@@ -64,6 +64,7 @@ Route::prefix("admin")->group(function (){
         Route::get("trouble", [StatisticController::class, 'statisticTrouble']);
         Route::get("plan", [StatisticController::class, 'statisticPlan']);
         Route::get("staff-by-plan", [StatisticController::class, 'getStaffByPlan']);
+        Route::get('export-statistic', [StatisticController::class, 'exportStatistic']);
     });
 
     Route::prefix("tree-image")->group(function (){
