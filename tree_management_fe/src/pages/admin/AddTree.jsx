@@ -85,7 +85,8 @@ const AddTree = () => {
   };
 
   console.log(tree);
-  console.log(sauBenh);
+  console.log(JSON.stringify(tree));
+  // console.log(sauBenh);
 
   const sauBenhErrors = validateSauBenh();
 

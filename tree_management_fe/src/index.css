@@ -130,6 +130,14 @@
 .react-datepicker__navigation {
   top: 18px !important;
 }
+.plan .react-datepicker__navigation {
+  top: 14px !important;
+}
+
+.plan .react-datepicker__header {
+  padding: 15px 0;
+  font-size: 1.2rem;
+}
 
 .react-datepicker__day-names,
 .react-datepicker__week {

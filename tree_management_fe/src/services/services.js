@@ -9,4 +9,13 @@ async function getData(url) {
   }
 }
 
-export { getData };
+async function postData(url, data) {
+  try {
+    const res = await axios.post(url, data);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export { getData, postData };

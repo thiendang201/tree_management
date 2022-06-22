@@ -20,18 +20,16 @@ const Plan = () => {
   ];
   const [DSKeHoach, setDSKeHoach] = useState([]);
 
-  // const [sapXep, setSapXep] = useState(sapXepList[0].value);
-  const onChangeSapXep = ({ value }) => {
+  const [sapXep, setSapXep] = useState(sapXepList[0]);
+  const onChangeSapXep = (sx) => {
+    const { value } = sx;
     const [prefix, sort] = value.split("_");
     if (prefix === "ut") {
+      setSapXep(sx);
       setDSKeHoach((prev) => [
-        ...prev.sort(
-          ({ doUuTien: a, tenKeHoach: c }, { doUuTien: b, tenKeHoach: d }) => {
-            // console.log(c, a);
-            // console.log(d, b);
-            return sort === "desc" ? b - a : a - b;
-          }
-        ),
+        ...prev.sort(({ doUuTien: a }, { doUuTien: b }) => {
+          return sort === "desc" ? b - a : a - b;
+        }),
       ]);
     }
 
@@ -41,10 +39,13 @@ const Plan = () => {
           const [d_s, m_s, y_s] = a.split("/");
           const [d_e, m_e, y_e] = b.split("/");
           return sort === "desc"
-            ? differenceInDays(new Date(y_e, m_e, d_e), new Date(y_s, m_s, d_s))
+            ? differenceInDays(
+                new Date(y_e, m_e - 1, d_e),
+                new Date(y_s, m_s - 1, d_s)
+              )
             : differenceInDays(
-                new Date(y_s, m_s, d_s),
-                new Date(y_e, m_e, d_e)
+                new Date(y_s, m_s - 1, d_s),
+                new Date(y_e, m_e - 1, d_e)
               );
         }),
       ]);
@@ -59,15 +60,19 @@ const Plan = () => {
 
         return {
           ...attrs,
-          ngayBatDau: format(new Date(y_s, m_s, d_s), "dd/MM/yyyy"),
-          ngayKetThuc: format(new Date(y_e, m_e, d_e), "dd/MM/yyyy"),
+          ngayBatDau: format(new Date(y_s, m_s - 1, d_s), "dd/MM/yyyy"),
+          ngayKetThuc: format(new Date(y_e, m_e - 1, d_e), "dd/MM/yyyy"),
           soNgay: differenceInDays(
-            new Date(y_e, m_e, d_e),
-            new Date(y_s, m_s, d_s)
+            new Date(y_e, m_e - 1, d_e),
+            new Date(y_s, m_s - 1, d_s)
           ),
         };
       });
-      setDSKeHoach(plans);
+      setDSKeHoach([
+        ...plans.sort(({ doUuTien: a }, { doUuTien: b }) => {
+          return b - a;
+        }),
+      ]);
     }
     fetchData();
   }, []);
@@ -98,6 +103,7 @@ const Plan = () => {
             options={sapXepList}
             classNamePrefix="keHoachSX"
             className="mt-0"
+            startValue={sapXep}
           />
           <div className="flex justify-end items-stretch">
             <div className="flex items-center relative">

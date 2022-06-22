@@ -32,7 +32,11 @@ const Input = ({
   error,
   classNamePrefix,
   maxDate,
+  minDate,
   isMulti,
+  dateFormat = "dd/MM/yyyy",
+  showMonthYearPicker = false,
+  icon,
 }) => {
   if (type === "select")
     return (
@@ -41,12 +45,13 @@ const Input = ({
           {label}
         </label>
         <Select
-          className={`mt-[0.6rem] text-[1.2rem] font-medium ${className} ${
+          className={`mt-[0.6rem] text-[1.2rem] rounded-[0.4rem] font-medium ${className} ${
             error && "border border-danger"
           }`}
           isMulti={isMulti}
           classNamePrefix={classNamePrefix || "react-select"}
-          defaultValue={options[0]}
+          // defaultValue={startValue}
+          value={startValue}
           onChange={onChange}
           options={options}
           placeholder={placeHolder}
@@ -61,32 +66,44 @@ const Input = ({
   if (type === "date") {
     const CustomDateInput = forwardRef(({ value, onClick }, ref) => (
       <button
-        className={`bg-[#FAFBFD] rounded-[0.4rem] p-[1.4rem] text-[1.2rem] font-medium outline-none relative text-left text-text-color ${className}`}
+        className={`bg-[#FAFBFD] rounded-[0.4rem] p-[1.4rem] text-[1.2rem] font-medium outline-none relative text-left text-text-color  flex gap-[0.4rem] items-center ${className}  ${
+          error && "border border-danger"
+        }`}
         onClick={onClick}
+        onBlur={onBlur}
         ref={ref}
       >
         {value || placeHolder}
-        <BsCalendarFill
-          className="absolute top-[50%] translate-y-[-50%] right-[1.4rem]"
-          size={"1.4rem"}
-          fill="#9FABC6"
-        />
+        {icon || (
+          <BsCalendarFill
+            className="absolute top-[50%] translate-y-[-50%] right-[1.4rem]"
+            size={"1.4rem"}
+            fill="#9FABC6"
+          />
+        )}
       </button>
     ));
     return (
       <div className="flex flex-col gap-[0.6rem]">
-        <label className="font-semibold text-[1.4rem]" htmlFor={name}>
-          {label}
-        </label>
-        <ReactDatePicker
-          selected={startValue}
-          dateFormat="dd/MM/yyyy"
-          maxDate={maxDate}
-          onChange={onChange}
-          locale={vi}
-          customInput={<CustomDateInput />}
-          calendarClassName="shadow-md"
-        />
+        {label && (
+          <label className="font-semibold text-[1.4rem]" htmlFor={name}>
+            {label}
+          </label>
+        )}
+        <div>
+          <ReactDatePicker
+            selected={startValue}
+            dateFormat={dateFormat}
+            maxDate={maxDate}
+            minDate={minDate}
+            onChange={onChange}
+            locale={vi}
+            customInput={<CustomDateInput />}
+            calendarClassName="shadow-md"
+            showMonthYearPicker={showMonthYearPicker}
+          />
+        </div>
+        {error && <p className="text-danger text-[1.2rem]">{error}</p>}
       </div>
     );
   }

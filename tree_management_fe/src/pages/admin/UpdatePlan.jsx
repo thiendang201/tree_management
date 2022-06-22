@@ -20,7 +20,7 @@ import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import { Context } from "../../Layout";
 
-const AddPlan = () => {
+const UpdatePlan = () => {
   const { addNotification } = React.useContext(Context);
   const navigate = useNavigate();
   const [DSNhanVien, setDSNhanVien] = useState([]);
@@ -261,7 +261,7 @@ const AddPlan = () => {
           <div className="bg-[#F7F8FA] rounded-full p-1">
             <ImArrowRight2 size={24} color={buttonColor} />
           </div>
-          <h2 className="text-[1.4rem] font-semibold">Thêm kế hoạch</h2>
+          <h2 className="text-[1.4rem] font-semibold">Cập nhật kế hoạch</h2>
         </div>
         <div>
           {
@@ -578,4 +578,4 @@ const AddPlan = () => {
   );
 };
 
-export default AddPlan;
+export default UpdatePlan;
