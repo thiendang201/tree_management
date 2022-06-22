@@ -21149,7 +21149,7 @@
 										"$ref": "AAAAAAGBitm1cw0fWAc="
 									},
 									"edgePosition": 1,
-									"text": "muốn \"thêm kế hoạch\""
+									"text": "muốn \"thêm\""
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -26843,7 +26843,7 @@
 										"$ref": "AAAAAAGBitm1dg43Nuc="
 									},
 									"edgePosition": 1,
-									"text": "muốn \"XÓA\""
+									"text": "muốn \"xóa\""
 								},
 								{
 									"_type": "EdgeLabelView",
@@ -28844,7 +28844,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGBitm1cAwUnIs="
 					},
-					"name": "muốn \"thêm kế hoạch\"",
+					"name": "muốn \"thêm\"",
 					"source": {
 						"$ref": "AAAAAAGBitm1dw6KruU="
 					},
@@ -29353,7 +29353,7 @@
 					"_parent": {
 						"$ref": "AAAAAAGBitm1cAwUnIs="
 					},
-					"name": "muốn \"XÓA\"",
+					"name": "muốn \"xóa\"",
 					"source": {
 						"$ref": "AAAAAAGBitm1dw6KruU="
 					},
