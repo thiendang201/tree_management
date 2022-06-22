@@ -12,6 +12,7 @@ class NhanVien extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = "NhanVien";
+    public $incrementing = false;
     /**
      * The attributes that are mass assignable.
      *

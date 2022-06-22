@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\PestImageController;
+use App\Http\Controllers\Api\Admin\PestStatusController;
 use App\Http\Controllers\Api\Admin\StaffController;
 use App\Http\Controllers\Api\Admin\StatisticController;
 use App\Http\Controllers\Api\Admin\TreeController;
 use App\Http\Controllers\Api\Admin\PlanController;
 use App\Http\Controllers\Api\Admin\TreeCategoryController;
+use App\Http\Controllers\Api\Admin\TreeImageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +21,16 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+//$prefix = config('apidoc.laravel.docs_url', '/doc');
+//$middleware = config('apidoc.laravel.middleware', []);
+//
+//Route::namespace('\Mpociot\ApiDoc\Http')
+//    ->middleware($middleware)
+//    ->group(function () use ($prefix) {
+//        Route::get($prefix, 'Controller@html')->name('apidoc');
+//        Route::get("$prefix.json", 'Controller@json')->name('apidoc.json');
+//    });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -52,5 +65,30 @@ Route::prefix("admin")->group(function (){
         Route::get("trouble", [StatisticController::class, 'statisticTrouble']);
         Route::get("plan", [StatisticController::class, 'statisticPlan']);
         Route::get("staff-by-plan", [StatisticController::class, 'getStaffByPlan']);
+        Route::get('export-statistic', [StatisticController::class, 'exportStatistic']);
+    });
+
+    Route::prefix("tree-image")->group(function (){
+        Route::get("list/{id}", [TreeImageController::class, 'index']);
+        Route::get("detail/{id}", [TreeImageController::class, 'getById']);
+        Route::post("create", [TreeImageController::class, 'create']);
+        Route::post("update", [TreeImageController::class, 'update']);
+        Route::delete("delete", [TreeImageController::class, 'delete']);
+    });
+
+    Route::prefix("pest-status")->group(function (){
+        Route::get("list/{id}", [PestStatusController::class, 'index']);
+        Route::get("detail/{id}", [PestStatusController::class, 'getById']);
+        Route::post("create", [PestStatusController::class, 'create']);
+        Route::put("update", [PestStatusController::class, 'update']);
+        Route::delete("delete", [PestStatusController::class, 'delete']);
+    });
+
+    Route::prefix("pest-image")->group(function (){
+        Route::get("list/{id}", [PestImageController::class, 'index']);
+        Route::get("detail/{id}", [PestImageController::class, 'getById']);
+        Route::post("create", [PestImageController::class, 'create']);
+        Route::put("update", [PestImageController::class, 'update']);
+        Route::delete("delete", [PestImageController::class, 'delete']);
     });
 });

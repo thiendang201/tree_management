@@ -5,6 +5,7 @@ namespace App\Http\Services\Tree;
 use App\Http\Services\PestImage\PestImageService;
 use App\Http\Services\PestStatus\PestStatusService;
 use App\Http\Services\TreeImage\TreeImageService;
+use App\Models\AnhCay;
 use App\Models\CayXanh;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\Helper;
@@ -73,9 +74,23 @@ class TreeService
         $tree->ngayTrong = $request->ngayTrong;
         $tree->trangThai = $request->trangThai;
         $tree->idLoaiCay = $request->idLoaiCay;
+
+        $listTreeImage = $request->AnhCay;
+        $listPestStatus= $request->tinhTrangSauBenh;
+
         $result = $tree->save();
+
+        foreach ($listTreeImage as $item){
+            $treeImage = $this->treeImageService->createByObject($item, $id);
+        }
+
+        foreach ($listPestStatus as $item){
+            $pestStatus = $this->pestStatusService->createByObject($item, $id);
+        }
+
         if ($result){
-            return ["Result" => "Data has been saved"];
+//            return ["Result" => "Data has been saved"];
+            return $this->getById($id);
         }
         else
         {
