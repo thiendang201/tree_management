@@ -58,17 +58,15 @@ const Statistic = () => {
   useEffect(() => {
     async function fetchData() {
       const { data, total } = await treeStatistic(treeFilter, treeFilter.page);
-      const newData =
-        treeFilter.page === 1
-          ? data
-          : (prev) => {
-              const ListId = prev.map(({ id }) => id);
-              const newt = [
-                ...prev,
-                ...data.filter(({ id }) => !ListId.includes(id)),
-              ];
-              return newt;
-            };
+      let newData = [];
+      if (treeFilter.page === 1) newData = data;
+      else {
+        const ListId = trees.data.map(({ id }) => id);
+        newData = [
+          ...trees.data,
+          ...data.filter(({ id }) => !ListId.includes(id)),
+        ];
+      }
       setTrees({ total: total, data: newData });
     }
 
@@ -85,17 +83,15 @@ const Statistic = () => {
         getMonth(month) + 1,
         page
       );
-      const newData =
-        page === 1
-          ? data
-          : (prev) => {
-              const ListId = prev.map(({ id }) => id);
-              const newt = [
-                ...prev,
-                ...data.filter(({ id }) => !ListId.includes(id)),
-              ];
-              return newt;
-            };
+      let newData = [];
+      if (planFilter.page === 1) newData = data;
+      else {
+        const ListId = plans.data.map(({ id }) => id);
+        newData = [
+          ...plans.data,
+          ...data.filter(({ id }) => !ListId.includes(id)),
+        ];
+      }
       setPlans({ total: total, data: newData });
     }
 
@@ -107,17 +103,15 @@ const Statistic = () => {
     async function fetchData() {
       const { year, page } = troubleFilter;
       const { data, total } = await troubleStatistic(getYear(year), page);
-      const newData =
-        page === 1
-          ? data
-          : (prev) => {
-              const ListId = prev.map(({ id }) => id);
-              const newt = [
-                ...prev,
-                ...data.filter(({ id }) => !ListId.includes(id)),
-              ];
-              return newt;
-            };
+      let newData = [];
+      if (troubleFilter.page === 1) newData = data;
+      else {
+        const ListId = troubles.data.map(({ id }) => id);
+        newData = [
+          ...troubles.data,
+          ...data.filter(({ id }) => !ListId.includes(id)),
+        ];
+      }
       setTroubles({ total: total, data: newData });
     }
 
@@ -524,7 +518,7 @@ const Statistic = () => {
             </div>
             <ul className="py-2">
               {plans.data.map((plan, index) => (
-                <li key={plan.id}>
+                <li key={index}>
                   <PlanItem {...plan} index={index + 1} />
                 </li>
               ))}

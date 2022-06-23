@@ -1,14 +1,24 @@
 import { BASE_URL } from "../config";
-import { deleteData, getData, postData } from "./services";
+import { deleteData, getData, postData, putData } from "./services";
 
 function planList() {
   const url = BASE_URL + "admin/plan/list";
   return getData(url);
 }
 
+function getPlan(id) {
+  const url = BASE_URL + "admin/plan/list/" + id;
+  return getData(url);
+}
+
 function addPlan(data) {
   const url = BASE_URL + "admin/plan/create";
   return postData(url, data);
+}
+
+function update(plan) {
+  const url = BASE_URL + `admin/plan/update`;
+  return putData(url, plan);
 }
 
 function deletePlan(id) {
@@ -23,4 +33,4 @@ function planStatistic(status, year, month, page) {
   return getData(url);
 }
 
-export { planList, addPlan, planStatistic, deletePlan };
+export { planList, addPlan, planStatistic, deletePlan, getPlan, update };

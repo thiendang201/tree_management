@@ -113,6 +113,9 @@ const Plan = () => {
   const toAddPlanPage = () => {
     navigate("add");
   };
+  const toEditPage = (id) => () => {
+    navigate("edit/" + id);
+  };
 
   return (
     <div className="p-[2rem]">
@@ -234,7 +237,7 @@ const Plan = () => {
                     {<DoUuTien doUuTien={doUuTien} />}
                   </td>
                   <td className="text-center py-[1.6rem] text-[1.2rem]">
-                    <button className="ml-1">
+                    <button className="ml-1" onClick={toEditPage(id)}>
                       <MdEdit size={18} />
                     </button>
                     <button className="ml-1">

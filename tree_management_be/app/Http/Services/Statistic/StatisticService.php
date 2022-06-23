@@ -24,7 +24,8 @@ class StatisticService
 //            "tree_category"=>$tree_category
 //        ];
         $query = DB::table('CayXanh')
-            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay');
+            ->join('LoaiCay', 'LoaiCay.id', 'CayXanh.idLoaiCay')
+            ->where('CayXanh.trangThai', '=', '1');
         if ($status==1)
         {
             $query->join('TinhTrangSauBenh', function ($join){

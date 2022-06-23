@@ -51,6 +51,7 @@ Route::prefix("admin")->group(function (){
     });
     Route::prefix("plan")->group(function (){
         Route::get("list", [PlanController::class, 'index']);
+        Route::get("list/{id}", [PlanController::class, 'getById']);
         Route::post("create", [PlanController::class, 'create']);
         Route::put("update", [PlanController::class, 'update']);
         Route::post("search", [PlanController::class, 'search']);

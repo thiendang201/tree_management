@@ -22,6 +22,12 @@ class PlanController extends Controller
         return $plans;
     }
 
+    public function getById($id)
+    {
+        $plans = $this->planService->getById($id);
+        return $plans;
+    }
+
     public function create(Request $request)
     {
         $result = $this->planService->create($request);

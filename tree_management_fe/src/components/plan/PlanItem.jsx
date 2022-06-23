@@ -47,9 +47,9 @@ const PlanItem = ({
         <div className="flex py-1">
           {staffs.map(({ id, tenNV, hinhAnh }, index) => (
             <div
-              key={id}
+              key={index}
               style={{
-                backgroundImage: `url(${hinhAnhNV || DefaultAvt})`,
+                backgroundImage: `url(${hinhAnh || DefaultAvt})`,
                 transform: `translateX(-${index * 30}%)`,
               }}
               className="rounded-full w-[3.5rem] h-[3.5rem] bg-center bg-no-repeat bg-cover bg-black border-2 border-white"

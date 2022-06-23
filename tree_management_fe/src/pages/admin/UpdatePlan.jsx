@@ -13,14 +13,15 @@ import { CSSTransition } from "react-transition-group";
 import { treeList } from "../../services/treeServices";
 import DefaultImg from "../../assets/images/default.jpg";
 import { staffList } from "../../services/staffServices";
-import { addPlan } from "../../services/planservices";
-import { useNavigate } from "react-router-dom";
+import { addPlan, getPlan, update } from "../../services/planservices";
+import { useNavigate, useParams } from "react-router-dom";
 import FluentTaskListSquareLtr24Filled from "../../assets/icons/FluentTaskListSquareLtr24Filled";
 import { buttonColor } from "../../config";
 import Button from "../../shared/Button";
 import { Context } from "../../Layout";
 
 const UpdatePlan = () => {
+  const { id } = useParams();
   const { addNotification } = React.useContext(Context);
   const navigate = useNavigate();
   const [DSNhanVien, setDSNhanVien] = useState([]);
@@ -69,8 +70,37 @@ const UpdatePlan = () => {
     const fetchData = async function () {
       const dsCay = await treeList(1, true);
       const dsNV = await staffList();
+      const plan = await getPlan(id);
+      const dsNVOptions = dsNV.map(({ id, tenNV }) => ({
+        label: tenNV,
+        value: id,
+      }));
       setDSCay(dsCay);
-      setDSNhanVien(dsNV.map(({ id, tenNV }) => ({ label: tenNV, value: id })));
+      setDSNhanVien(dsNVOptions);
+
+      const [y, m, d] = plan.ngayBatDau.split("-");
+      const [yk, mk, dk] = plan.ngayKetThuc.split("-");
+      plan.ngayBatDau = new Date(y, m - 1, d);
+      plan.ngayKetThuc = new Date(yk, mk - 1, dk);
+      plan.idNVPhuTrach = dsNVOptions.find(({ value }) => {
+        console.log(value, plan.idNVPhuTrach);
+        return value === plan.idNVPhuTrach;
+      });
+
+      plan.doUuTien = doUuTien.find(({ value }) => value === plan.doUuTien);
+      plan.DSCay = plan.DSCay.map(({ idCay }) => idCay);
+
+      setKeHoach((prev) => ({
+        ...prev,
+        ...plan,
+        touched: {
+          tenKeHoach: true,
+          diaDiem: true,
+          moTa: true,
+          // DSCay: true,
+          idNVPhuTrach: true,
+        },
+      }));
     };
     fetchData();
   }, []);
@@ -157,12 +187,20 @@ const UpdatePlan = () => {
     }));
   };
 
-  const ThemKeHoach = async () => {
-    const { touched, ngayBatDau, ngayKetThuc, doUuTien, DSCongViec, ...attrs } =
-      keHoach;
+  const CapNhatKeHoach = async () => {
+    const {
+      touched,
+      ngayBatDau,
+      ngayKetThuc,
+      idNVPhuTrach,
+      doUuTien,
+      DSCongViec,
+      ...attrs
+    } = keHoach;
     const keHoachMoi = {
       ...attrs,
       doUuTien: doUuTien.value,
+      idNVPhuTrach: idNVPhuTrach.value,
       ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
       ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
       DSCongViec: DSCongViec.map(({ DSNhanVien, id, ...cv }) => ({
@@ -171,9 +209,9 @@ const UpdatePlan = () => {
       })),
     };
     console.log(keHoachMoi);
-    const res = await addPlan(keHoachMoi);
+    const res = await update(keHoachMoi);
     console.log(res);
-    addNotification("Thành công", "Thêm kế hoạch mới thành công!");
+    addNotification("Thành công", "Cập nhật thành công!");
     navigate(-1);
   };
 
@@ -274,7 +312,7 @@ const UpdatePlan = () => {
                   : "solid"
               }
               text="Lưu"
-              onClick={ThemKeHoach}
+              onClick={CapNhatKeHoach}
               icon={<MdSave size={"2rem"} fill="#fff" />}
             />
           }
@@ -309,6 +347,7 @@ const UpdatePlan = () => {
             options={DSNhanVien}
             placeHolder="Chọn nhân viên phụ trách"
             label="Nhân viên phụ trách"
+            startValue={keHoach.idNVPhuTrach}
             onBlur={onBlur("idNVPhuTrach", setKeHoach)}
             error={eidNVPhuTrach}
           />

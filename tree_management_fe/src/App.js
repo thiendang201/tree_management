@@ -9,6 +9,7 @@ import Map from "./pages/admin/Map";
 import AddTree from "./pages/admin/AddTree";
 import AddPlan from "./pages/admin/AddPlan";
 import UpdateTree from "./pages/admin/UpdateTree";
+import UpdatePlan from "./pages/admin/UpdatePlan";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="admin/tree/edit/:id" element={<UpdateTree />} />
         <Route path="admin/plan" element={<Plan />} />
         <Route path="admin/plan/add" element={<AddPlan />} />
+        <Route path="admin/plan/edit/:id" element={<UpdatePlan />} />
         <Route path="admin/problem" element={<TreeProblem />} />
         <Route path="admin/statistic" element={<Statistic />} />
         <Route path="admin/map" element={<Map />} />

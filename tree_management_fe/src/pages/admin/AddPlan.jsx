@@ -158,12 +158,20 @@ const AddPlan = () => {
   };
 
   const ThemKeHoach = async () => {
-    const { touched, ngayBatDau, ngayKetThuc, doUuTien, DSCongViec, ...attrs } =
-      keHoach;
+    const {
+      touched,
+      ngayBatDau,
+      ngayKetThuc,
+      doUuTien,
+      DSCongViec,
+      idNVPhuTrach,
+      ...attrs
+    } = keHoach;
     const keHoachMoi = {
       ...attrs,
       doUuTien: doUuTien.value,
       ngayBatDau: format(ngayBatDau, "yyyy-MM-dd"),
+      idNVPhuTrach: idNVPhuTrach.value,
       ngayKetThuc: format(ngayKetThuc, "yyyy-MM-dd"),
       DSCongViec: DSCongViec.map(({ DSNhanVien, id, ...cv }) => ({
         ...cv,
