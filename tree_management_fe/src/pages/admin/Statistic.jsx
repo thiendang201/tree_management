@@ -1,5 +1,4 @@
 import { MdInsertChart, MdKeyboardArrowDown } from "react-icons/md";
-
 import Chart from "react-apexcharts";
 import { BiExport, BiReset } from "react-icons/bi";
 import { buttonColor, primaryColor } from "../../config";
@@ -166,6 +165,7 @@ const Statistic = () => {
   }, []);
 
   const onChange = (setState, type, name) => (data) => {
+    setState((prev) => ({ ...prev, page: 1 }));
     if (type === "select") {
       const { value } = data;
       setState((prev) => ({ ...prev, [name]: value }));
@@ -248,13 +248,71 @@ const Statistic = () => {
   const tinhTrangOptions = [
     {
       label: "Bình thường",
-      value: 0,
+      value: "0",
     },
     {
       label: "Sâu bệnh",
-      value: 1,
+      value: "1",
     },
   ];
+
+  const generatePDF = () => {
+    const divContents = document.getElementById("pdfContent").outerHTML;
+    const a = window.open("", "", "height=500, width=500");
+    a.document.write("<html>");
+    a.document.write(`<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script>
+        tailwind.config = {
+          theme: {
+          fontFamily: {
+            sans: ["Poppins", "sans-serif"],
+          },
+          extend: {
+            spacing: {
+              1: "1rem",
+              2: "2rem",
+              3: "3rem",
+              4: "4rem",
+              58: "5.8rem",
+              59: "5.9rem",
+            },
+            colors: {
+              "border-color": "#F0F0F0",
+              primary: "#81B199",
+              "button-color": "#9FABC6",
+              danger: "#FD8080",
+              "text-color": "#49587b",
+              disabled: "#A9A9A9",
+            },
+          },
+        },
+        }
+      </script>
+      <style>
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+      html {
+        font-size: 62.5%;
+        color: #49587b;
+      }
+      table, thead {
+        border: 2px solid #F0F0F0;
+      }
+      body {
+        padding: 0 2rem 2rem 3rem;
+      }
+      </style>
+    </head>`);
+    a.document.write(
+      "<body ><h1 class='text-[2.4rem] text-center font-semibold mt-4'>Thống kê cây xanh</h1> <br>"
+    );
+    a.document.write(divContents);
+    a.document.write("</body></html>");
+    a.print();
+    a.document.close();
+  };
 
   return (
     <div className="p-[2rem] pb-0">
@@ -271,6 +329,7 @@ const Statistic = () => {
           <Button
             text="Xuất file"
             icon={<BiExport size={"2rem"} fill="#fff" />}
+            onClick={generatePDF}
           />
         </div>
       </div>
@@ -382,7 +441,7 @@ const Statistic = () => {
                 </div>
               )}
             </div>
-            <table className="w-[100%] mt-2">
+            <table id="pdfContent" className="w-[100%] mt-2">
               <thead className="bg-[#FAFBFD]">
                 <tr>
                   <th className="py-[1.6rem] text-[1.2rem] w-[6%]">STT</th>
